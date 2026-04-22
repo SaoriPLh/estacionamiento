@@ -24,14 +24,12 @@
 
 ## Configuración de base de datos
 
-1. Crear archivo `db.properties`
-2. Configurar:
+
+2. Configurar `db.properties`:
 
 db.url=jdbc:mysql://localhost:3306/estacionamiento
 db.user=tu_usuario
 db.password=tu_password
 
-## Notas importantes
 
-* No subir `db.properties`
-* Usar `db.properties.example` como guía
+
