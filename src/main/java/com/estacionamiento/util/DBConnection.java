@@ -35,4 +35,18 @@ public class DBConnection {
         return connection;
     
     }
+  
+    public static void main(String[] args) {
+        try {
+            Connection conn = DBConnection.getConnection();
+            if (conn != null) {
+                System.out.println("Conexión exitosa 🚀");
+            } else {
+                System.out.println("Error en la conexión ❌");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    
+}
 }
