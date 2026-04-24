@@ -22,14 +22,6 @@
 * datos
 * interfaz
 
-## Configuración de base de datos
-
-
-2. Configurar `db.properties`:
-
-db.url=jdbc:mysql://localhost:3306/estacionamiento
-db.user=tu_usuario
-db.password=tu_password
 
 
 
