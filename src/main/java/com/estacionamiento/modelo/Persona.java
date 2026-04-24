@@ -9,33 +9,39 @@ package com.estacionamiento.modelo;
  * @author saori
  */
 public class Persona {
-    
+
     private int idPersona;
-    private int idRol;
+    private Empresa empresa;
+    private Rol rol;
     private String nombre;
     private String apellidoPaterno;
     private String apellidoMaterno;
     private String username;
     private String password;
-    
-    public Persona (){};
-    
-    public Persona(int idPersona, int idRol, String nombre, String apellidoPaterno, String apellidoMaterno, String username, String password) {
-        
+
+    public Persona() {}
+
+    public Persona(int idPersona, Empresa empresa, Rol rol,
+                   String nombre, String apellidoPaterno,
+                   String apellidoMaterno, String username, String password) {
         this.idPersona = idPersona;
-        this.idRol = idRol;
+        this.empresa = empresa;
+        this.rol = rol;
         this.nombre = nombre;
         this.apellidoPaterno = apellidoPaterno;
         this.apellidoMaterno = apellidoMaterno;
         this.username = username;
         this.password = password;
     }
-    
+
     public int getIdPersona() { return idPersona; }
     public void setIdPersona(int idPersona) { this.idPersona = idPersona; }
 
-    public int getIdRol() { return idRol; }
-    public void setIdRol(int idRol) { this.idRol = idRol; }
+    public Empresa getEmpresa() { return empresa; }
+    public void setEmpresa(Empresa empresa) { this.empresa = empresa; }
+
+    public Rol getRol() { return rol; }
+    public void setRol(Rol rol) { this.rol = rol; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
@@ -51,15 +57,4 @@ public class Persona {
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
-
-    // 4. Método toString (Para depuración, SIN mostrar el password por seguridad)
-    @Override
-    public String toString() {
-        return "Persona{" +
-                "id=" + idPersona +
-                ", nombre='" + nombre + '\'' +
-                ", rol=" + idRol +
-                ", username='" + username + '\'' +
-                '}';
-    }
 }
