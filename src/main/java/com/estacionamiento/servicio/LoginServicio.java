@@ -32,7 +32,7 @@ public class LoginServicio {
         }
 
         
-        if (p.getIdRol() == MisConstantes.ROL_ADMIN) {
+        if (p.getRol().getIdRol()== MisConstantes.ROL_ADMIN) {
             System.out.println("Acceso total al Administrador.");
             return estacionamientoDAO.listarTodo(); 
         } 
