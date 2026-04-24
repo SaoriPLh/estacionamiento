@@ -40,9 +40,9 @@ public class DBConnection {
         try {
             Connection conn = DBConnection.getConnection();
             if (conn != null) {
-                System.out.println("Conexión exitosa 🚀");
+                System.out.println("Conexión exitosa ");
             } else {
-                System.out.println("Error en la conexión ❌");
+                System.out.println("Error en la conexión");
             }
         } catch (Exception e) {
             e.printStackTrace();
