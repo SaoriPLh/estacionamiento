@@ -9,33 +9,31 @@ package com.estacionamiento.modelo;
  * Nota: La dirección es una referencia a otra tabla (FK).
  */
 public class Estacionamiento {
+
     private int idEstacionamiento;
-    private int idDireccion; 
+    private Empresa empresa;
+    private Direccion direccion;
     private String nombre;
 
-   
-    public Estacionamiento() {
-    }
+    public Estacionamiento() {}
 
-    
-    public Estacionamiento(int idEstacionamiento, int idDireccion, String nombre) {
+    public Estacionamiento(int idEstacionamiento, Empresa empresa,
+                           Direccion direccion, String nombre) {
         this.idEstacionamiento = idEstacionamiento;
-        this.idDireccion = idDireccion;
+        this.empresa = empresa;
+        this.direccion = direccion;
         this.nombre = nombre;
     }
 
-   
     public int getIdEstacionamiento() { return idEstacionamiento; }
     public void setIdEstacionamiento(int idEstacionamiento) { this.idEstacionamiento = idEstacionamiento; }
 
-    public int getIdDireccion() { return idDireccion; }
-    public void setIdDireccion(int idDireccion) { this.idDireccion = idDireccion; }
+    public Empresa getEmpresa() { return empresa; }
+    public void setEmpresa(Empresa empresa) { this.empresa = empresa; }
+
+    public Direccion getDireccion() { return direccion; }
+    public void setDireccion(Direccion direccion) { this.direccion = direccion; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
-
-    @Override
-    public String toString() {
-        return nombre; 
-    }
 }
