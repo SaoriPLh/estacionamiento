@@ -4,8 +4,9 @@
  */
 package com.estacionamiento.dao;
 
-import com.estacionamiento.modelo.Estacionamiento;
+import com.estacionamiento.modelo.*;
 import com.estacionamiento.util.DBConnection;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,34 +14,67 @@ import java.util.List;
 public class PermisosDAO {
 
     public List<Estacionamiento> obtenerEstacionamientosPorPersona(int idPersona) {
+
         List<Estacionamiento> lista = new ArrayList<>();
-        
-        // Usamos 'nombre' e 'id_direccion' como dice en la bd 
-        String sql = "SELECT e.id_estacionamiento, e.nombre, e.id_direccion " +
+
+        String sql = "SELECT e.id_estacionamiento, e.nombre, " +
+                     "emp.id_empresa, emp.nombre_comercial, " +
+                     "d.id_direccion, d.calle, " +
+                     "c.id_ciudad, c.nombre AS ciudad, " +
+                     "es.id_estado, es.nombre AS estado " +
                      "FROM estacionamiento e " +
                      "JOIN permisos p ON e.id_estacionamiento = p.id_estacionamiento " +
+                     "JOIN empresa emp ON e.id_empresa = emp.id_empresa " +
+                     "JOIN direccion d ON e.id_direccion = d.id_direccion " +
+                     "JOIN ciudad c ON d.id_ciudad = c.id_ciudad " +
+                     "JOIN estado es ON c.id_estado = es.id_estado " +
                      "WHERE p.id_persona = ? AND p.id_estado_permiso = 1";
 
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
-            
+
             ps.setInt(1, idPersona);
-            
+
             try (ResultSet rs = ps.executeQuery()) {
+
                 while (rs.next()) {
-                    Estacionamiento est = new Estacionamiento();
-                    //  Los nombres de las columnas deben coincidir con el SELECT de arriba
-                    est.setIdEstacionamiento(rs.getInt("id_estacionamiento"));
-                    est.setNombre(rs.getString("nombre")); 
-                    est.setIdDireccion(rs.getInt("id_direccion"));
+
+                   
+                    Estado estado = new Estado();
+                    estado.setIdEstado(rs.getInt("id_estado"));
+                    estado.setNombre(rs.getString("estado"));
+
                     
+                    Ciudad ciudad = new Ciudad();
+                    ciudad.setIdCiudad(rs.getInt("id_ciudad"));
+                    ciudad.setNombre(rs.getString("ciudad"));
+                    ciudad.setEstado(estado);
+
+                    
+                    Direccion direccion = new Direccion();
+                    direccion.setIdDireccion(rs.getInt("id_direccion"));
+                    direccion.setCalle(rs.getString("calle"));
+                    direccion.setCiudad(ciudad);
+
+                   
+                    Empresa empresa = new Empresa();
+                    empresa.setIdEmpresa(rs.getInt("id_empresa"));
+                    empresa.setNombreComercial(rs.getString("nombre_comercial"));
+
+                    Estacionamiento est = new Estacionamiento();
+                    est.setIdEstacionamiento(rs.getInt("id_estacionamiento"));
+                    est.setNombre(rs.getString("nombre"));
+                    est.setEmpresa(empresa);
+                    est.setDireccion(direccion);
+
                     lista.add(est);
                 }
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return lista;
     }
 }
