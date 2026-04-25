@@ -4,6 +4,8 @@
  */
 package com.estacionamiento.modelo;
 
+import java.util.List;
+
 /**
  * Modelo que representa la tabla 'estacionamiento'.
  * Nota: La dirección es una referencia a otra tabla (FK).
@@ -14,6 +16,7 @@ public class Estacionamiento {
     private Empresa empresa;
     private Direccion direccion;
     private String nombre;
+    private List<Permiso> personalAutorizado;
 
     public Estacionamiento() {}
 
@@ -31,6 +34,9 @@ public class Estacionamiento {
     public Empresa getEmpresa() { return empresa; }
     public void setEmpresa(Empresa empresa) { this.empresa = empresa; }
 
+    public List<Permiso> getPersonalAutorizado() { return personalAutorizado; }
+    public void setPersonalAutorizado(List<Permiso> personalAutorizado) { this.personalAutorizado = personalAutorizado; }
+    
     public Direccion getDireccion() { return direccion; }
     public void setDireccion(Direccion direccion) { this.direccion = direccion; }
 

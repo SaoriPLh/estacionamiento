@@ -4,6 +4,8 @@
  */
 package com.estacionamiento.modelo;
 
+import java.util.List;
+
 /**
  *
  * @author saori
@@ -18,7 +20,7 @@ public class Persona {
     private String apellidoMaterno;
     private String username;
     private String password;
-
+    private List<Permiso> permisos;
     public Persona() {}
 
     public Persona(int idPersona, Empresa empresa, Rol rol,
@@ -46,6 +48,9 @@ public class Persona {
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
 
+    public List<Permiso> getPermisos() { return permisos; }
+    public void setPermisos(List<Permiso> permisos) { this.permisos = permisos; }
+    
     public String getApellidoPaterno() { return apellidoPaterno; }
     public void setApellidoPaterno(String apellidoPaterno) { this.apellidoPaterno = apellidoPaterno; }
 
