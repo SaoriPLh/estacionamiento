@@ -8,6 +8,27 @@ package com.estacionamiento.modelo;
  *
  * @author garci
  */
+
 public class EstadoCodigoAcceso {
-    
+
+    private int idEstadoCodigo;
+    private String nombreEstado;
+
+    public EstadoCodigoAcceso() {}
+
+    public EstadoCodigoAcceso(int idEstadoCodigo, String nombreEstado) {
+        this.idEstadoCodigo = idEstadoCodigo;
+        this.nombreEstado = nombreEstado;
+    }
+
+    public int getIdEstadoCodigo() { return idEstadoCodigo; }
+    public void setIdEstadoCodigo(int idEstadoCodigo) { this.idEstadoCodigo = idEstadoCodigo; }
+
+    public String getNombreEstado() { return nombreEstado; }
+    public void setNombreEstado(String nombreEstado) { this.nombreEstado = nombreEstado; }
+
+    @Override
+    public String toString() {
+        return "EstadoCodigoAcceso{idEstadoCodigo=" + idEstadoCodigo + ", nombreEstado=" + nombreEstado + "}";
+    }
 }
