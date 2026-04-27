@@ -32,4 +32,4 @@ public class Estado {
         return "Estado{idEstado=" + idEstado + ", nombre=" + nombre + "}";
     }
 }
-}
+
