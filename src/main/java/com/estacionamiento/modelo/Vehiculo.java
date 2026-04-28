@@ -8,18 +8,20 @@ public class Vehiculo {
 
     private int idVehiculo;
     private Cliente cliente;
+    private Marca marca;
     private String placa;
     private String modelo;
     private String color;
 
     public Vehiculo() {}
 
-    public Vehiculo(int idVehiculo, Cliente cliente, String placa, String modelo, String color) {
+    public Vehiculo(int idVehiculo, Cliente cliente, String placa, String modelo, String color, Marca marca) {
         this.idVehiculo = idVehiculo;
         this.cliente = cliente;
         this.placa = placa;
         this.modelo = modelo;
         this.color = color;
+        this.marca = marca;
     }
 
     public int getIdVehiculo() { return idVehiculo; }
@@ -33,7 +35,9 @@ public class Vehiculo {
 
     public String getModelo() { return modelo; }
     public void setModelo(String modelo) { this.modelo = modelo; }
-
+    
+    public Marca getMarca () {return this.marca;}
+    public void setMarca(Marca marca) {this.marca = marca;}
     public String getColor() { return color; }
     public void setColor(String color) { this.color = color; }
 
