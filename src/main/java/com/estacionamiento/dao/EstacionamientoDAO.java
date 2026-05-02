@@ -1,10 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.estacionamiento.dao;
 
-import com.estacionamiento.modelo.Estacionamiento;
 import com.estacionamiento.modelo.*;
 import com.estacionamiento.util.DBConnection;
 import java.sql.*;
@@ -13,134 +8,149 @@ import java.util.List;
 
 public class EstacionamientoDAO {
 
-    /**
-     * 
-     * @return 
-     */
-    public List<Estacionamiento> listarTodo() {
+    public Estacionamiento buscarPorId(int id) {
+      
+        String sql = "SELECT e.id_estacionamiento, e.nombre, e.activo, " +
+                     "emp.id_empresa, emp.nombre_comercial, " +
+                     "d.id_direccion, d.calle, " +
+                     "c.id_ciudad, c.nombre AS ciudad, " +
+                     "es.id_estado, es.nombre AS estado " +
+                     "FROM estacionamiento e " +
+                     "JOIN empresa emp ON e.id_empresa = emp.id_empresa " +
+                     "JOIN direccion d ON e.id_direccion = d.id_direccion " +
+                     "JOIN ciudad c ON d.id_ciudad = c.id_ciudad " +
+                     "JOIN estado es ON c.id_estado = es.id_estado " +
+                     "WHERE e.id_estacionamiento = ?";
 
-    List<Estacionamiento> lista = new ArrayList<>();
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
-    String sql = "SELECT e.id_estacionamiento, e.nombre, " +
-                 "emp.id_empresa, emp.nombre_comercial, " +
-                 "d.id_direccion, d.calle, " +
-                 "c.id_ciudad, c.nombre AS ciudad, " +
-                 "es.id_estado, es.nombre AS estado " +
-                 "FROM estacionamiento e " +
-                 "JOIN empresa emp ON e.id_empresa = emp.id_empresa " +
-                 "JOIN direccion d ON e.id_direccion = d.id_direccion " +
-                 "JOIN ciudad c ON d.id_ciudad = c.id_ciudad " +
-                 "JOIN estado es ON c.id_estado = es.id_estado";
+            ps.setInt(1, id);
 
-    try (Connection con = DBConnection.getConnection();
-         PreparedStatement ps = con.prepareStatement(sql);
-         ResultSet rs = ps.executeQuery()) {
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Estado estado = new Estado();
+                    estado.setIdEstado(rs.getInt("id_estado"));
+                    estado.setNombre(rs.getString("estado"));
 
-        while (rs.next()) {
+                    Ciudad ciudad = new Ciudad();
+                    ciudad.setIdCiudad(rs.getInt("id_ciudad"));
+                    ciudad.setNombre(rs.getString("ciudad"));
+                    ciudad.setEstado(estado);
 
-          
-            Estado estado = new Estado();
-            estado.setIdEstado(rs.getInt("id_estado"));
-            estado.setNombre(rs.getString("estado"));
+                    Direccion direccion = new Direccion();
+                    direccion.setIdDireccion(rs.getInt("id_direccion"));
+                    direccion.setCalle(rs.getString("calle"));
+                    direccion.setCiudad(ciudad);
 
-         
-            Ciudad ciudad = new Ciudad();
-            ciudad.setIdCiudad(rs.getInt("id_ciudad"));
-            ciudad.setNombre(rs.getString("ciudad"));
-            ciudad.setEstado(estado);
+                    Empresa empresa = new Empresa();
+                    empresa.setIdEmpresa(rs.getInt("id_empresa"));
+                    empresa.setNombreComercial(rs.getString("nombre_comercial"));
 
-         
-            Direccion direccion = new Direccion();
-            direccion.setIdDireccion(rs.getInt("id_direccion"));
-            direccion.setCalle(rs.getString("calle"));
-            direccion.setCiudad(ciudad);
+                    Estacionamiento est = new Estacionamiento();
+                    est.setIdEstacionamiento(rs.getInt("id_estacionamiento"));
+                    est.setNombre(rs.getString("nombre"));
+                 
+                    est.setActivo(rs.getBoolean("activo")); 
+                    est.setEmpresa(empresa);
+                    est.setDireccion(direccion);
 
-     
-            Empresa empresa = new Empresa();
-            empresa.setIdEmpresa(rs.getInt("id_empresa"));
-            empresa.setNombreComercial(rs.getString("nombre_comercial"));
-
-          
-            Estacionamiento est = new Estacionamiento();
-            est.setIdEstacionamiento(rs.getInt("id_estacionamiento"));
-            est.setNombre(rs.getString("nombre"));
-            est.setEmpresa(empresa);
-            est.setDireccion(direccion);
-
-            lista.add(est);
+                    return est;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return null;
     }
 
-    return lista;
-}
+    public List<Estacionamiento> listarPorEmpresa(int idEmpresa) {
+        List<Estacionamiento> lista = new ArrayList<>();
+        
+     
+        String sql = "SELECT e.id_estacionamiento, e.nombre, e.activo, " +
+                     "d.id_direccion, d.calle, c.id_ciudad, c.nombre AS ciudad, " +
+                     "es.id_estado, es.nombre AS estado " +
+                     "FROM estacionamiento e " +
+                     "INNER JOIN direccion d ON e.id_direccion = d.id_direccion " +
+                     "INNER JOIN ciudad c ON d.id_ciudad = c.id_ciudad " +
+                     "INNER JOIN estado es ON c.id_estado = es.id_estado " +
+                     "WHERE e.id_empresa = ? AND e.activo = 1";
 
-    /**
-     para cuando necesite los detalles de una sola zona.
-     * @param id
-     * @return 
-     */
-public Estacionamiento buscarPorId(int id) {
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
-    String sql = "SELECT e.id_estacionamiento, e.nombre, " +
-                 "emp.id_empresa, emp.nombre_comercial, " +
-                 "d.id_direccion, d.calle, " +
-                 "c.id_ciudad, c.nombre AS ciudad, " +
-                 "es.id_estado, es.nombre AS estado " +
-                 "FROM estacionamiento e " +
-                 "JOIN empresa emp ON e.id_empresa = emp.id_empresa " +
-                 "JOIN direccion d ON e.id_direccion = d.id_direccion " +
-                 "JOIN ciudad c ON d.id_ciudad = c.id_ciudad " +
-                 "JOIN estado es ON c.id_estado = es.id_estado " +
-                 "WHERE e.id_estacionamiento = ?";
+            ps.setInt(1, idEmpresa);
 
-    try (Connection con = DBConnection.getConnection();
-         PreparedStatement ps = con.prepareStatement(sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Estado estado = new Estado();
+                    estado.setIdEstado(rs.getInt("id_estado"));
+                    estado.setNombre(rs.getString("estado"));   
+                    
+                    Ciudad ciudad = new Ciudad();
+                    ciudad.setIdCiudad(rs.getInt("id_ciudad"));
+                    ciudad.setNombre(rs.getString("ciudad"));
+                    ciudad.setEstado(estado);
+                    
+                    Direccion direccion = new Direccion();
+                    direccion.setIdDireccion(rs.getInt("id_direccion"));
+                    direccion.setCalle(rs.getString("calle"));
+                    direccion.setCiudad(ciudad);
 
-        ps.setInt(1, id);
+                    Estacionamiento est = new Estacionamiento();
+                    est.setIdEstacionamiento(rs.getInt("id_estacionamiento"));
+                    est.setNombre(rs.getString("nombre"));
+                    est.setActivo(rs.getBoolean("activo"));
+                    est.setDireccion(direccion);
 
-        try (ResultSet rs = ps.executeQuery()) {
+                    lista.add(est);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al listar por empresa: " + e.getMessage());
+        }
+        return lista;
+    }
 
-            if (rs.next()) {
+    public Estacionamiento insertarEstacionamiento(Estacionamiento estacionamiento) {
 
-             
-                Estado estado = new Estado();
-                estado.setIdEstado(rs.getInt("id_estado"));
-                estado.setNombre(rs.getString("estado"));
-
-                Ciudad ciudad = new Ciudad();
-                ciudad.setIdCiudad(rs.getInt("id_ciudad"));
-                ciudad.setNombre(rs.getString("ciudad"));
-                ciudad.setEstado(estado);
-
+        String sql = "INSERT INTO estacionamiento (id_empresa, id_direccion, nombre, activo) VALUES (?, ?, ?, ?)";
+        
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 
-                Direccion direccion = new Direccion();
-                direccion.setIdDireccion(rs.getInt("id_direccion"));
-                direccion.setCalle(rs.getString("calle"));
-                direccion.setCiudad(ciudad);
+            ps.setInt(1, estacionamiento.getEmpresa().getIdEmpresa());
+            ps.setInt(2, estacionamiento.getDireccion().getIdDireccion());
+            ps.setString(3, estacionamiento.getNombre());
+        
+            ps.setBoolean(4, estacionamiento.getActivo());
+            
+            int filasAfectadas = ps.executeUpdate();
+            
+            if (filasAfectadas > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        estacionamiento.setIdEstacionamiento(rs.getInt(1));
+                    }
+                }
+                System.out.println("Estacionamiento guardado con éxito: " + estacionamiento.getNombre());
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al insertar estacionamiento: " + e.getMessage());
+        }
+        return estacionamiento; 
+    }
 
-                
-                Empresa empresa = new Empresa();
-                empresa.setIdEmpresa(rs.getInt("id_empresa"));
-                empresa.setNombreComercial(rs.getString("nombre_comercial"));
-
-               
-                Estacionamiento est = new Estacionamiento();
-                est.setIdEstacionamiento(rs.getInt("id_estacionamiento"));
-                est.setNombre(rs.getString("nombre"));
-                est.setEmpresa(empresa);
-                est.setDireccion(direccion);
-
-                return est;
+    public boolean desactivar(int idEstacionamiento) {
+            String sql = "UPDATE estacionamiento SET activo = 0 WHERE id_estacionamiento = ?";
+            try (Connection con = DBConnection.getConnection();
+                 PreparedStatement ps = con.prepareStatement(sql)) {
+                ps.setInt(1, idEstacionamiento);
+                return ps.executeUpdate() > 0;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
             }
         }
-
-    } catch (SQLException e) {
-        e.printStackTrace();
-    }
-
-    return null;
-}
 }

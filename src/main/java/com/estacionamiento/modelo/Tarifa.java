@@ -17,23 +17,46 @@ public class Tarifa {
     private Estacionamiento estacionamiento;
     private TipoTarifa tipoTarifa;
     private UnidadDescuento unidadDescuento;
-    private String tipoCobro;
+    private int cantidad_descuento;
+    private TipoCobro tipoCobro;
     private double precio;
-    private double valorDescuento;
+    private Double valorDescuento;
+    
 
     public Tarifa() {}
 
-    public Tarifa(int idTarifa, Estacionamiento estacionamiento,
-                  TipoTarifa tipoTarifa, UnidadDescuento unidadDescuento,
-                  String tipoCobro, double precio, double valorDescuento) {
+    public Tarifa(int idTarifa, Estacionamiento estacionamiento, TipoTarifa tipoTarifa, UnidadDescuento unidadDescuento, int cantidad_descuento, TipoCobro tipoCobro, double precio, Double valorDescuento) {
         this.idTarifa = idTarifa;
         this.estacionamiento = estacionamiento;
         this.tipoTarifa = tipoTarifa;
         this.unidadDescuento = unidadDescuento;
+        this.cantidad_descuento = cantidad_descuento;
         this.tipoCobro = tipoCobro;
         this.precio = precio;
         this.valorDescuento = valorDescuento;
     }
+
+    public Tarifa(Estacionamiento estacionamiento, TipoTarifa tipoTarifa, TipoCobro tipoCobro, double precio, Double valorDescuento) {
+        
+        this.estacionamiento = estacionamiento;
+        this.tipoTarifa = tipoTarifa;
+        this.tipoCobro = tipoCobro;
+        this.precio = precio;
+        this.valorDescuento = valorDescuento;
+    }
+
+    public Tarifa(Estacionamiento estacionamiento, TipoTarifa tipoTarifa, UnidadDescuento unidadDescuento, int cantidad_descuento, TipoCobro tipoCobro, double precio) {
+        this.estacionamiento = estacionamiento;
+        this.tipoTarifa = tipoTarifa;
+        this.unidadDescuento = unidadDescuento;
+        this.cantidad_descuento = cantidad_descuento;
+        this.tipoCobro = tipoCobro;
+        this.precio = precio;
+    }
+    
+
+    
+
 
     public int getIdTarifa() { return idTarifa; }
     public void setIdTarifa(int idTarifa) { this.idTarifa = idTarifa; }
@@ -47,14 +70,22 @@ public class Tarifa {
     public UnidadDescuento getUnidadDescuento() { return unidadDescuento; }
     public void setUnidadDescuento(UnidadDescuento unidadDescuento) { this.unidadDescuento = unidadDescuento; }
 
-    public String getTipoCobro() { return tipoCobro; }
-    public void setTipoCobro(String tipoCobro) { this.tipoCobro = tipoCobro; }
+    public TipoCobro getTipoCobro() { return tipoCobro; }
+    public void setTipoCobro(TipoCobro tipoCobro) { this.tipoCobro = tipoCobro; }
 
     public double getPrecio() { return precio; }
     public void setPrecio(double precio) { this.precio = precio; }
 
-    public double getValorDescuento() { return valorDescuento; }
-    public void setValorDescuento(double valorDescuento) { this.valorDescuento = valorDescuento; }
+    public Double getValorDescuento() { return valorDescuento; }
+    public void setValorDescuento(Double valorDescuento) { this.valorDescuento = valorDescuento; }
+
+    public int getCantidad_descuento() {
+        return cantidad_descuento;
+    }
+
+    public void setCantidad_descuento(int cantidad_descuento) {
+        this.cantidad_descuento = cantidad_descuento;
+    }
 
     @Override
     public String toString() {

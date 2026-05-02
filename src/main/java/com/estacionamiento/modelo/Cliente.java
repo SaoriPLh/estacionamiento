@@ -8,6 +8,7 @@ public class Cliente {
 
     private int idCliente;
     private Tarifa tarifa;
+    private CodigoAcceso codigoAcceso;
     private String nombre;
     private String apellidoPaterno;
     private String apellidoMaterno;

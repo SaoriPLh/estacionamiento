@@ -23,6 +23,16 @@ public class Espacio {
         this.estadoEspacio = estadoEspacio;
         this.codigo = codigo;
     }
+    
+        public Espacio(Estacionamiento estacionamiento,
+                   TipoEspacio tipoEspacio, EstadoEspacio estadoEspacio,
+                   String codigo) {
+        
+        this.estacionamiento = estacionamiento;
+        this.tipoEspacio = tipoEspacio;
+        this.estadoEspacio = estadoEspacio;
+        this.codigo = codigo;
+    }
 
     public int getIdEspacio() { return idEspacio; }
     public void setIdEspacio(int idEspacio) { this.idEspacio = idEspacio; }

@@ -9,7 +9,7 @@ import java.util.Date;
 public class CodigoAcceso {
 
     private int idCodigo;
-    private Persona persona;
+    private Cliente cliente;
     private Estacionamiento estacionamiento;
     private EstadoCodigoAcceso estadoCodigo;
     private String codigo;
@@ -18,12 +18,12 @@ public class CodigoAcceso {
 
     public CodigoAcceso() {}
 
-    public CodigoAcceso(int idCodigo, Persona persona,
+    public CodigoAcceso(int idCodigo, Cliente cliente,
                         Estacionamiento estacionamiento,
                         EstadoCodigoAcceso estadoCodigo,
                         String codigo, Date fechaInicio, Date fechaFin) {
         this.idCodigo = idCodigo;
-        this.persona = persona;
+        this.cliente =cliente;
         this.estacionamiento = estacionamiento;
         this.estadoCodigo = estadoCodigo;
         this.codigo = codigo;
@@ -34,9 +34,7 @@ public class CodigoAcceso {
     public int getIdCodigo() { return idCodigo; }
     public void setIdCodigo(int idCodigo) { this.idCodigo = idCodigo; }
 
-    public Persona getPersona() { return persona; }
-    public void setPersona(Persona persona) { this.persona = persona; }
-
+   
     public Estacionamiento getEstacionamiento() { return estacionamiento; }
     public void setEstacionamiento(Estacionamiento estacionamiento) { this.estacionamiento = estacionamiento; }
 
@@ -52,6 +50,15 @@ public class CodigoAcceso {
     public Date getFechaFin() { return fechaFin; }
     public void setFechaFin(Date fechaFin) { this.fechaFin = fechaFin; }
 
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    
     @Override
     public String toString() {
         return "CodigoAcceso{" +

@@ -16,9 +16,21 @@ public class DBConnection {
     public static Connection getConnection(){
     try {
             Properties props = new Properties();
-            InputStream input = DBConnection.class
-                .getClassLoader()
-                .getResourceAsStream("com/estacionamiento/util/db.properties");
+            InputStream input = DBConnection.class  //<- aca con class sabe donde esta ubicado en q paquete entonces junton con getresource busca el archivo en ese mismo paquete
+                .getResourceAsStream("db.properties");
+            
+            /*
+            o pudo haber sido 
+            InputStream input = DBConnection.class.getClassLoader().getResourceAsStream("com/estacionamiento/util/db.properties");
+         aca usamos getclassloader para q busque desde la raiz(resources) no desde el paquete actual aunque en el classpath a la hora de ejecutar todo este junto
+            este esta obligado a buscar desde la raiz permitiendonos asi cosas como que si cambio esta clase de paquete aun asi busca desde la raiz la ruta q indiquemos
+            cosa q no pasaria con la opcion de arriba ya q esta siempre buscaria en el paquete esperando q este ahi pero entonces getClassLoader() necesita la referencia de 
+            .class para funcionar (la que sea), al parecer esto es porque en Java, el ClassLoader es el objeto que 'dio a luz' a las clases.
+
+Como el ClassLoader es un objeto del sistema, no puedes acceder a él de forma 'estática' o global directamente; necesitas preguntarle a cualquier clase que ya esté cargada:
+            'Oye, ¿quién es tu jefe (tu cargador)?'. Una vez que obtienes esa referencia, sales del contexto pequeño de tu paquete y obtienes permiso para ver todo el mapa 
+            del proyecto desde la raíz (resources).
+            */
 
             props.load(input);
 

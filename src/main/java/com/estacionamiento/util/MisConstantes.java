@@ -4,58 +4,80 @@
  */
 package com.estacionamiento.util;
 
-/**
- * Diccionario oficial del sistema de estacionamiento.
- * Mapea los IDs de los catálogos de la base de datos para evitar "números mágicos".
- * * @author saori
- */
+
 public class MisConstantes {
 
-    // 1. ROL
     public static final int ROL_ADMIN = 1;
     public static final int ROL_EMPLEADO = 2;
 
-    // 2. ESTADO_ESPACIO 
+
     public static final int ESPACIO_DISPONIBLE = 1;
     public static final int ESPACIO_OCUPADO = 2;
     public static final int ESPACIO_RESERVADO = 3;
+    public static final int ESPACIO_PENSION = 4;
 
-    // 3. TIPO_ESPACIO
+  
     public static final int TIPO_ESPACIO_NORMAL = 1;
     public static final int TIPO_ESPACIO_RESERVA = 2;
 
-    // 4. ESTADO_REGISTRO 
     public static final int REGISTRO_RESERVADO = 1;
     public static final int REGISTRO_ACTIVO = 2;
     public static final int REGISTRO_FINALIZADO = 3;
     public static final int REGISTRO_CANCELADO = 4;
 
-    // 5. TIPO_TARIFA 
+   
     public static final int TARIFA_NORMAL = 1;
     public static final int TARIFA_PENSION = 2;
     public static final int TARIFA_EVENTO = 3;
     public static final int TARIFA_ESPECIAL = 4;
     public static final int TARIFA_CONVENIO = 5;
 
-    // 6. UNIDAD_DESCUENTO 
+
     public static final int UNIDAD_MINUTO = 1; 
     public static final int UNIDAD_HORA = 2;   
     public static final int UNIDAD_DIA = 3;    
+    
+    public static final int TIPO_COBRO_HORA = 1;    
+    public static final int TIPO_COBRO_MENSUAL = 2;    
+    public static final int TIPO_COBRO_QUINCENAL = 3;    
+    
+    
+    
 
-    // 7. ESTADO_CODIGO_ACCESO 
+    
     public static final int CODIGO_ACTIVO = 1;
     public static final int CODIGO_USADO = 2;
     public static final int CODIGO_VENCIDO = 3;
     public static final int CODIGO_CANCELADO = 4;
 
-    // 9. ESTADO_PERMISO
+    
     public static final int PERMISO_ACTIVO = 1;
     public static final int PERMISO_SUSPENDIDO = 2;
     public static final int PERMISO_REVOCADO = 3;
 
-    // EXTRAS: Tipos de cobro   
-    public static final String COBRO_POR_HORA = "por_hora";
-    public static final String COBRO_FIJO = "fijo";
-    public static final String COBRO_QUINCENAL = "quincenal";
-    public static final String COBRO_MENSUAL = "mensual";
+  
+    public static String getNombreEstadoEspacio(int id) {
+        switch (id) {
+            case ESPACIO_DISPONIBLE: return "Disponible";
+            case ESPACIO_OCUPADO:    return "Ocupado";
+            case ESPACIO_RESERVADO:  return "Reservado";
+            default: return "Desconocido";
+        }
+    }
+
+    public static String getNombreTipoEspacio(int id) {
+        switch (id) {
+            case TIPO_ESPACIO_NORMAL:  return "Normal";
+            case TIPO_ESPACIO_RESERVA: return "Reserva";
+            default: return "General";
+        }
+    }
+
+    public static String getNombreRol(int id) {
+        switch (id) {
+            case ROL_ADMIN:    return "Administrador";
+            case ROL_EMPLEADO: return "Empleado";
+            default: return "Sin Rol";
+        }
+    }
 }

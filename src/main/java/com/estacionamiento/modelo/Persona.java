@@ -1,13 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.estacionamiento.modelo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Modelo que representa la tabla 'persona'.
  * @author saori
  */
 public class Persona {
@@ -21,11 +18,19 @@ public class Persona {
     private String username;
     private String password;
     private List<Permiso> permisos;
-    public Persona() {}
+    private Double salario;
+    // Nueva bandera para seguridad
+    private boolean requiereCambio;
 
-    public Persona(int idPersona, Empresa empresa, Rol rol,
+    public Persona() {
+        this.permisos = new ArrayList<>();
+    }
+
+  
+       public Persona(int idPersona, Empresa empresa, Rol rol,
                    String nombre, String apellidoPaterno,
-                   String apellidoMaterno, String username, String password) {
+                   String apellidoMaterno, String username,String password, boolean requiereCambio) {
+        this();
         this.idPersona = idPersona;
         this.empresa = empresa;
         this.rol = rol;
@@ -34,8 +39,32 @@ public class Persona {
         this.apellidoMaterno = apellidoMaterno;
         this.username = username;
         this.password = password;
+        this.requiereCambio = requiereCambio; // Asignamos el valor
+    }
+    // Constructor para insertar nuevas personas (sin ID)
+    public Persona(Empresa empresa, Rol rol,
+                   String nombre, String apellidoPaterno,
+                   String apellidoMaterno, String username, String password, boolean requiereCambio,Double salario) {
+        this();
+        this.empresa = empresa;
+        this.rol = rol;
+        this.nombre = nombre;
+        this.apellidoPaterno = apellidoPaterno;
+        this.apellidoMaterno = apellidoMaterno;
+        this.username = username;
+        this.password = password;
+        this.requiereCambio = requiereCambio;
+        this.salario = salario;
     }
 
+    // --- Métodos de lógica ---
+    public void agregarPermiso(Permiso p) {
+        if (p != null) {
+            this.permisos.add(p);
+        }
+    }
+
+    // --- Getters y Setters ---
     public int getIdPersona() { return idPersona; }
     public void setIdPersona(int idPersona) { this.idPersona = idPersona; }
 
@@ -48,9 +77,6 @@ public class Persona {
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public List<Permiso> getPermisos() { return permisos; }
-    public void setPermisos(List<Permiso> permisos) { this.permisos = permisos; }
-    
     public String getApellidoPaterno() { return apellidoPaterno; }
     public void setApellidoPaterno(String apellidoPaterno) { this.apellidoPaterno = apellidoPaterno; }
 
@@ -62,4 +88,23 @@ public class Persona {
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+
+    public List<Permiso> getPermisos() { return permisos; }
+    public void setPermisos(List<Permiso> permisos) { this.permisos = permisos; }
+
+    // Getter y Setter para la nueva funcionalidad
+    public boolean isRequiereCambio() { return requiereCambio; }
+    public void setRequiereCambio(boolean requiereCambio) { this.requiereCambio = requiereCambio; }
+
+    public Double getSalario() {
+        return salario;
+    }
+
+    public void setSalario(Double salario) {
+        this.salario = salario;
+    }
+
+
+    
+    
 }

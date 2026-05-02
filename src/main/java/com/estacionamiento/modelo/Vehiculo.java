@@ -23,6 +23,17 @@ public class Vehiculo {
         this.color = color;
         this.marca = marca;
     }
+    
+    
+    public Vehiculo( Cliente cliente, String placa, String modelo, String color, Marca marca) {
+      
+        this.cliente = cliente;
+        this.placa = placa;
+        this.modelo = modelo;
+        this.color = color;
+        this.marca = marca;
+    }
+
 
     public int getIdVehiculo() { return idVehiculo; }
     public void setIdVehiculo(int idVehiculo) { this.idVehiculo = idVehiculo; }

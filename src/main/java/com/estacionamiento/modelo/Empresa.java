@@ -10,7 +10,9 @@ package com.estacionamiento.modelo;
  */
 
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Empresa {
 
@@ -21,13 +23,16 @@ public class Empresa {
     private String telefono;
     private String correoContacto;
     private Date fechaRegistro;
-
+    private List<Estacionamiento> estacionamientos;
     // Constructor vacío
-    public Empresa() {}
+    public Empresa() {
+        this.estacionamientos = new ArrayList<>();
+    }
 
     // Constructor completo
     public Empresa(int idEmpresa, String nombreComercial, String razonSocial,
                    String rfc, String telefono, String correoContacto, Date fechaRegistro) {
+        this();
         this.idEmpresa = idEmpresa;
         this.nombreComercial = nombreComercial;
         this.razonSocial = razonSocial;
@@ -60,7 +65,28 @@ public class Empresa {
     public Date getFechaRegistro() { return fechaRegistro; }
     public void setFechaRegistro(Date fechaRegistro) { this.fechaRegistro = fechaRegistro; }
 
-    // toString (sin datos sensibles)
+    public List<Estacionamiento> getEstacionamientos() {
+        return estacionamientos;
+    }
+
+  
+    public void setEstacionamientos(List<Estacionamiento> estacionamientos) {
+        this.estacionamientos = estacionamientos;
+    }
+
+   
+    public void agregarEstacionamiento(Estacionamiento est) {
+        if (est != null) {
+            
+            est.setEmpresa(this);
+            this.estacionamientos.add(est);
+        }
+    }
+
+    public void eliminarEstacionamiento(int idEstacionamiento) {
+        this.estacionamientos.removeIf(e -> e.getIdEstacionamiento() == idEstacionamiento);
+    }
+
     @Override
     public String toString() {
         return "Empresa{" +
