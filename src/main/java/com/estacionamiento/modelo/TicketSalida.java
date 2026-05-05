@@ -24,20 +24,7 @@ public class TicketSalida {
     private String tipoDescuento;
     private TarifaDAO tarifaDao =  new TarifaDAO();
     
-    public void prepararDatos(Registro reg) {
-         Tarifa tarifaRegistro = tarifaDao.buscarPorId(reg.getTarifa().getIdTarifa());
-        this.montoBase = tarifaRegistro.getPrecio();
-        this.montoTotal = reg.getMonto();
-        
-        
-        if (this.montoTotal > this.montoBase) {
-            this.cargoExtra = this.montoTotal - this.montoBase;
-        } else {
-            this.cargoExtra = 0.0;
-        }
-        
-        this.mensajeFinal = "¡Gracias por su preferencia!";
-    }
+    
 
     public TicketSalida() {
     }

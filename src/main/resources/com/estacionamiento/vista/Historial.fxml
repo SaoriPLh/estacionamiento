@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.estacionamiento.controlador.HistorialController"
+      styleClass="content-area" spacing="24">
+
+    <!-- Encabezado -->
+    <HBox alignment="CENTER_LEFT" spacing="12">
+        <Label text="Historial de Movimientos" styleClass="page-title" HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btnImprimir" text="🖨  Imprimir Reporte" styleClass="btn-outline"
+                onAction="#imprimirReporte" visible="false" managed="false"/>
+        <Button text="⟳  Recargar" styleClass="btn-secondary" onAction="#recargar"/>
+    </HBox>
+
+    <!-- Filtros -->
+    <VBox styleClass="card" spacing="16">
+        <HBox spacing="16" alignment="CENTER_LEFT">
+            <TextField fx:id="txtBuscar" promptText="🔍  Buscar por matrícula o número de espacio..."
+                       styleClass="search-field" HBox.hgrow="ALWAYS"/>
+            <ComboBox fx:id="cmbFiltroTarifa" promptText="Tipo de tarifa" minWidth="180"/>
+            <DatePicker fx:id="dpInicio" promptText="Fecha inicio" prefWidth="150"/>
+            <DatePicker fx:id="dpFin" promptText="Fecha fin" prefWidth="150"/>
+            <Button text="Filtrar" styleClass="btn-primary" onAction="#filtrar"/>
+            <Button text="Limpiar" styleClass="btn-secondary" onAction="#limpiarFiltros"/>
+        </HBox>
+    </VBox>
+
+    <!-- Lista de registros -->
+    <ScrollPane VBox.vgrow="ALWAYS" fitToWidth="true" styleClass="scroll-pane">
+        <VBox fx:id="vboxRegistros" spacing="10"/>
+    </ScrollPane>
+
+    <!-- Sin resultados -->
+    <Label fx:id="lblSinResultados" text="No se encontraron registros con los filtros aplicados."
+           style="-fx-text-fill:#94a3b8;-fx-font-size:14px;" visible="false" managed="false"/>
+
+</VBox>

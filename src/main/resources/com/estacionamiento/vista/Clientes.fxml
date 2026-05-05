@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.estacionamiento.controlador.ClientesController"
+      styleClass="content-area" spacing="20">
+
+    <Label text="Clientes" styleClass="page-title"/>
+
+    <HBox spacing="12" alignment="CENTER_LEFT">
+        <TextField fx:id="txtBuscar" promptText="Buscar por nombre o correo..."
+                   styleClass="text-field" HBox.hgrow="ALWAYS"/>
+        <Button text="+ Nuevo Cliente" styleClass="btn-primary" onAction="#nuevoCliente"/>
+        <Button text="Recargar" styleClass="btn-secondary" onAction="#recargar"/>
+    </HBox>
+
+    <TableView fx:id="tablaClientes" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colNombre"    text="Nombre"         prefWidth="200"/>
+            <TableColumn fx:id="colPlaca"     text="Placa"          prefWidth="100"/>
+            <TableColumn fx:id="colTelefono"  text="Teléfono"       prefWidth="120"/>
+            <TableColumn fx:id="colCorreo"    text="Correo"         prefWidth="200"/>
+            <TableColumn fx:id="colPension"   text="Pensión Activa" prefWidth="110"/>
+            <TableColumn fx:id="colCodigo"    text="Código Activo"  prefWidth="110"/>
+            <TableColumn fx:id="colAcciones"  text="Acciones"       prefWidth="320"/>
+        </columns>
+    </TableView>
+
+    <Label fx:id="lblEstado" text="" style="-fx-text-fill:#64748b; -fx-font-size:12px;"/>
+
+</VBox>

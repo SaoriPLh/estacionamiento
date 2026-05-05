@@ -28,7 +28,7 @@ public class MisConstantes {
    
     public static final int TARIFA_NORMAL = 1;
     public static final int TARIFA_PENSION = 2;
-    public static final int TARIFA_EVENTO = 3;
+
     public static final int TARIFA_ESPECIAL = 4;
     public static final int TARIFA_CONVENIO = 5;
 
@@ -39,7 +39,7 @@ public class MisConstantes {
     
     public static final int TIPO_COBRO_HORA = 1;    
     public static final int TIPO_COBRO_MENSUAL = 2;    
-    public static final int TIPO_COBRO_QUINCENAL = 3;    
+   
     
     
     
@@ -55,12 +55,17 @@ public class MisConstantes {
     public static final int PERMISO_SUSPENDIDO = 2;
     public static final int PERMISO_REVOCADO = 3;
 
+    public static final int PENSION_ACTIVA    = 1;
+    public static final int PENSION_VENCIDA   = 2;
+    public static final int PENSION_SUSPENDIDA = 3;
+
   
     public static String getNombreEstadoEspacio(int id) {
         switch (id) {
             case ESPACIO_DISPONIBLE: return "Disponible";
             case ESPACIO_OCUPADO:    return "Ocupado";
             case ESPACIO_RESERVADO:  return "Reservado";
+            case ESPACIO_PENSION:    return "Pensión";
             default: return "Desconocido";
         }
     }
@@ -78,6 +83,15 @@ public class MisConstantes {
             case ROL_ADMIN:    return "Administrador";
             case ROL_EMPLEADO: return "Empleado";
             default: return "Sin Rol";
+        }
+    }
+
+    public static String getNombreEstadoPension(int id) {
+        switch (id) {
+            case PENSION_ACTIVA:     return "Activa";
+            case PENSION_VENCIDA:    return "Vencida";
+            case PENSION_SUSPENDIDA: return "Suspendida";
+            default: return "Desconocido";
         }
     }
 }

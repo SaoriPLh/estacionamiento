@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.estacionamiento.controlador.FormularioClienteController"
+      styleClass="modal-root"
+      minWidth="480">
+
+    <ScrollPane fx:id="scrollPane"
+                fitToWidth="true"
+                VBox.vgrow="ALWAYS"
+                hbarPolicy="NEVER"
+                vbarPolicy="AS_NEEDED"
+                style="-fx-background-color:transparent;">
+
+        <VBox spacing="20" style="-fx-padding:20;">
+
+            <Label fx:id="lblTitulo" text="Nuevo Cliente Pensionado" styleClass="modal-title"/>
+            <Label fx:id="lblSubtitulo" text="Registra los datos del cliente con tarifa de pensión mensual"
+                   styleClass="modal-subtitle"/>
+
+            <!-- Datos personales — se oculta en modo solo-código -->
+            <VBox fx:id="panelDatos" spacing="16">
+                <Separator/>
+
+                <HBox spacing="16">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Nombre *" styleClass="form-label"/>
+                        <TextField fx:id="txtNombre"/>
+                    </VBox>
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Apellido Paterno *" styleClass="form-label"/>
+                        <TextField fx:id="txtApellidoP"/>
+                    </VBox>
+                </HBox>
+
+                <HBox spacing="16">
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Apellido Materno" styleClass="form-label"/>
+                        <TextField fx:id="txtApellidoM"/>
+                    </VBox>
+                    <VBox spacing="6" HBox.hgrow="ALWAYS">
+                        <Label text="Teléfono" styleClass="form-label"/>
+                        <TextField fx:id="txtTelefono"/>
+                    </VBox>
+                </HBox>
+
+                <VBox spacing="6">
+                    <Label text="Correo Electrónico" styleClass="form-label"/>
+                    <TextField fx:id="txtCorreo"/>
+                </VBox>
+            </VBox>
+
+            <!-- PANEL CÓDIGO DE ACCESO -->
+            <VBox fx:id="panelCodigo" spacing="12" visible="false" managed="false"
+                  style="-fx-background-color:#eff6ff; -fx-padding:16; -fx-background-radius:8;">
+
+                <Label text="Código de Acceso" style="-fx-font-weight:bold; -fx-font-size:13px; -fx-text-fill:#1e40af;"/>
+
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <VBox HBox.hgrow="ALWAYS" spacing="4">
+                        <Label text="Vigencia (días)" styleClass="form-label"/>
+                        <Spinner fx:id="spnDias" min="1" max="365" initialValue="30"
+                                 style="-fx-text-fill:#111827; -fx-font-size:13px;" maxWidth="120"/>
+                    </VBox>
+                    <VBox alignment="BOTTOM_LEFT">
+                        <Button text="Generar Código" onAction="#generarCodigo" styleClass="btn-primary"/>
+                    </VBox>
+                </HBox>
+
+                <VBox fx:id="panelCodigoGenerado" visible="false" managed="false" spacing="6"
+                      style="-fx-background-color:#dcfce7; -fx-padding:10; -fx-background-radius:6;">
+                    <Label text="Código generado:" style="-fx-font-size:12px; -fx-text-fill:#166534;"/>
+                    <Label fx:id="lblCodigoGenerado" style="-fx-font-size:16px; -fx-font-weight:bold; -fx-text-fill:#15803d;"/>
+                </VBox>
+            </VBox>
+
+            <Label fx:id="lblError" visible="false" managed="false"
+                   style="-fx-text-fill:#ef4444; -fx-font-size:12px;"/>
+
+            <Separator/>
+
+            <HBox spacing="12" alignment="CENTER_RIGHT">
+                <Button text="Cerrar" onAction="#cerrar" styleClass="btn-secondary"/>
+                <Button fx:id="btnGuardar" text="Guardar" onAction="#guardar" styleClass="btn-primary"/>
+            </HBox>
+
+        </VBox>
+    </ScrollPane>
+
+</VBox>

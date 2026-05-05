@@ -82,7 +82,7 @@ public boolean insertarEstacionamiento(Empresa empresa, Estacionamiento estacion
     if (empresa == null || estacionamiento == null) {
         return false;
     }
-    Estacionamiento guardado = estacionamientoDao.insertarEstacionamiento(estacionamiento);
+    Estacionamiento guardado = estacionamientoDao.insertar(estacionamiento);
     
    
     if (guardado != null && guardado.getIdEstacionamiento() > 0) {

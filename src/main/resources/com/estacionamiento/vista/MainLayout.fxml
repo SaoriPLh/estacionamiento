@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.estacionamiento.controlador.MainLayoutController"
+            stylesheets="@styles/app.css">
+
+    <!-- SIDEBAR -->
+    <left>
+        <VBox styleClass="sidebar" spacing="4" prefWidth="240">
+            <padding><Insets top="24" right="16" bottom="24" left="16"/></padding>
+
+            <!-- Usuario -->
+            <HBox styleClass="sidebar-user-box" spacing="12" alignment="CENTER_LEFT">
+                <StackPane styleClass="sidebar-avatar">
+                    <Label fx:id="lblAvatarInicial" text="A" styleClass="sidebar-avatar-label"/>
+                </StackPane>
+                <VBox spacing="2">
+                    <Label fx:id="lblNombreUsuario" text="Admin" styleClass="sidebar-username"/>
+                    <Label fx:id="lblRolUsuario" text="Admin" styleClass="sidebar-role"/>
+                </VBox>
+            </HBox>
+
+            <!-- Navegación (Sin símbolos raros para evitar errores de path) -->
+            <Button fx:id="btnDashboard" text="Dashboard" styleClass="nav-btn"
+                    onAction="#mostrarDashboard" maxWidth="Infinity"/>
+            <Button fx:id="btnHistorial" text="Historial" styleClass="nav-btn"
+                    onAction="#mostrarHistorial" maxWidth="Infinity"/>
+            <Button fx:id="btnAdministracion" text="Administracion" styleClass="nav-btn"
+                    onAction="#mostrarAdministracion" maxWidth="Infinity"
+                    visible="false" managed="false"/>
+            <Button fx:id="btnPensiones" text="Pensiones" styleClass="nav-btn"
+                    onAction="#mostrarPensiones" maxWidth="Infinity"
+                    visible="false" managed="false"/>
+            <Button fx:id="btnClientes" text="Clientes" styleClass="nav-btn"
+                    onAction="#mostrarClientes" maxWidth="Infinity"
+                    visible="false" managed="false"/>
+            <Button fx:id="btnConfiguracion" text="Configuracion" styleClass="nav-btn"
+                    onAction="#mostrarConfiguracion" maxWidth="Infinity"
+                    visible="false" managed="false"/>
+
+            <!-- Espaciador -->
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <!-- Zona activa -->
+            <VBox spacing="4" style="-fx-background-color:#1e293b; -fx-background-radius:8; -fx-padding:12;">
+                <Label text="Zona activa" style="-fx-text-fill:#64748b; -fx-font-size:11px;"/>
+                <Label fx:id="lblZonaActiva" text="Cargando..." style="-fx-text-fill:#94a3b8; -fx-font-size:13px; -fx-font-weight:bold;"/>
+            </VBox>
+
+            <Region prefHeight="1" style="-fx-background-color: #1e293b;">
+                <VBox.margin><Insets top="8" bottom="4"/></VBox.margin>
+            </Region>
+
+            <!-- Cambiar contraseña -->
+            <Button text="Mi Contraseña" styleClass="nav-btn"
+                    onAction="#abrirCambiarPassword" maxWidth="Infinity"/>
+
+            <!-- Cerrar sesión -->
+            <Button text="Cerrar Sesion" styleClass="nav-btn-logout"
+                    onAction="#cerrarSesion" maxWidth="Infinity"/>
+
+        </VBox>
+    </left>
+
+    <center>
+        <StackPane fx:id="contenedorContenido" style="-fx-background-color:#f1f5f9;"/>
+    </center>
+
+</BorderPane>

@@ -14,13 +14,12 @@ public class Cliente {
     private String apellidoMaterno;
     private String correo;
     private String telefono;
-    private String tipoCliente;
 
     public Cliente() {}
 
     public Cliente(int idCliente, Tarifa tarifa, String nombre,
                    String apellidoPaterno, String apellidoMaterno,
-                   String correo, String telefono, String tipoCliente) {
+                   String correo, String telefono) {
         this.idCliente = idCliente;
         this.tarifa = tarifa;
         this.nombre = nombre;
@@ -28,7 +27,6 @@ public class Cliente {
         this.apellidoMaterno = apellidoMaterno;
         this.correo = correo;
         this.telefono = telefono;
-        this.tipoCliente = tipoCliente;
     }
 
     public int getIdCliente() { return idCliente; }
@@ -52,9 +50,14 @@ public class Cliente {
     public String getTelefono() { return telefono; }
     public void setTelefono(String telefono) { this.telefono = telefono; }
 
-    public String getTipoCliente() { return tipoCliente; }
-    public void setTipoCliente(String tipoCliente) { this.tipoCliente = tipoCliente; }
+    
+ public CodigoAcceso getCodigoAcceso() {
+        return codigoAcceso;
+    }
 
+    public void setCodigoAcceso(CodigoAcceso codigoAcceso) {
+        this.codigoAcceso = codigoAcceso;
+    }
     @Override
     public String toString() {
         return "Cliente{" +
@@ -62,4 +65,6 @@ public class Cliente {
                 ", nombre='" + nombre + '\'' +
                 '}';
     }
+
+   
 }

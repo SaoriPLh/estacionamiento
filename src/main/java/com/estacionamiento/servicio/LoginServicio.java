@@ -14,32 +14,57 @@ public class LoginServicio {
     private PermisosDAO permisosDAO = new PermisosDAO();
     private EstacionamientoDAO estacionamientoDAO = new EstacionamientoDAO();
 
-    public int procesarLogin(String user, String passPlana) {
+ public int procesarLogin(String user, String passPlana) {
 
     Persona p = personaDAO.buscarPorUsername(user); 
-    
-    if (p == null) return -1; 
+    if (p == null) return -1;
 
-    
-    if (!PasswordHasher.verificar(passPlana, p.getPassword())) {
-        return -1; 
-    }
-        
-        
-        p.setPermisos(permisosDAO.obtenerPermisosPorPersona(p.getIdPersona()));
-        
-        if (p.getPermisos().isEmpty()) return -2; 
-        
-        SessionManager.getInstance().setUsuario(p);
-        SessionManager.getInstance().setEmpresa(p.getEmpresa());
-        List<Estacionamiento> sedes = obtenerSedesAutorizadas(p);
+    boolean passwordCorrecta;
 
-        if (sedes.size() == 1) {
-            SessionManager.getInstance().setEstacionamiento(sedes.get(0));
-            return 1; 
+    if (p.isRequiereCambio()) {
+        // Intentar bcrypt primero (empleado con cambio solicitado por admin)
+        // Si falla, intentar comparación plana (cuenta creada manualmente en BD)
+        try {
+            passwordCorrecta = PasswordHasher.verificar(passPlana, p.getPassword());
+        } catch (Exception e) {
+            passwordCorrecta = false;
         }
-        return 0; 
+        if (!passwordCorrecta) {
+            passwordCorrecta = passPlana.equals(p.getPassword());
+        }
+        if (!passwordCorrecta) return -1;
+        SessionManager.getInstance().setUsuario(p);
+        return 2; // forzar cambio
+    } else {
+       
+        try {
+            passwordCorrecta = PasswordHasher.verificar(passPlana, p.getPassword());
+        } catch (Exception e) {
+            throw new RuntimeException("Error al verificar contraseña", e);
+        }
+
+        if (!passwordCorrecta) return -1;
     }
+
+   
+    return inicializarSesion(p);
+
+    // resto igual
+  /*   p.setPermisos(permisosDAO.obtenerPermisosPorPersona(p.getIdPersona()));
+    if (p.getPermisos().isEmpty()) return -2;
+
+    SessionManager.getInstance().setUsuario(p);
+    SessionManager.getInstance().setEmpresa(p.getEmpresa());
+
+    List<Estacionamiento> sedes = obtenerSedesAutorizadas(p);
+
+    if (sedes.size() == 1) {
+        SessionManager.getInstance().setEstacionamiento(sedes.get(0));
+        return 1;
+    }
+
+    return 0;*/
+}
 
 
         //este metodo lo llamara la interfaz para cuando ya elija el admin o empleadoConPrivilegios que Estacionamiento y ahora si guardamos
@@ -52,26 +77,26 @@ public class LoginServicio {
     //este se volveria a ocupar dentro de la interfaz para poder mostrar las opciones de estacionamientos 
     //a las q puede acceder el admin porque peude haber empleados con acceso a dif zonas pero no las mismas q un admin
     //permitiendonos dibujar en la ui esta info de las zonas etc
-    public List<Estacionamiento> obtenerSedesAutorizadas(Persona p) {
-        if (p == null) return new ArrayList<>();
-
-       
-        if (p.getRol() != null && p.getRol().getIdRol() == MisConstantes.ROL_ADMIN) {
-            return estacionamientoDAO.listarPorEmpresa(p.getEmpresa().getIdEmpresa());
-        } 
+        public List<Estacionamiento> obtenerSedesAutorizadas(Persona p) {
+            if (p == null) return new ArrayList<>();
 
         
-        List<Estacionamiento> sedes = new ArrayList<>();
-        if (p.getPermisos() != null) {
-            for (Permiso perm : p.getPermisos()) {
-             
-                if (perm.getEstadoPermiso().getIdEstadoPermiso() == MisConstantes.PERMISO_ACTIVO) {
-                    sedes.add(perm.getEstacionamiento());
+            if (p.getRol() != null && p.getRol().getIdRol() == MisConstantes.ROL_ADMIN) {
+                return estacionamientoDAO.listarPorEmpresa(p.getEmpresa().getIdEmpresa());
+            } 
+
+            
+            List<Estacionamiento> sedes = new ArrayList<>();
+            if (p.getPermisos() != null) {
+                for (Permiso perm : p.getPermisos()) {
+                
+                    if (perm.getEstadoPermiso().getIdEstadoPermiso() == MisConstantes.PERMISO_ACTIVO) {
+                        sedes.add(perm.getEstacionamiento());
+                    }
                 }
             }
+            return sedes;
         }
-        return sedes;
-    }
     
  public boolean cambiarContraseña(int idPersona, String nuevaContraseña) {
    
@@ -97,10 +122,44 @@ public class LoginServicio {
     return false;
 }
  
- public boolean solicitarCambioContraseña(int idPersona){  // este metodo en la ui haremos q si persona en el login es rol se muestre el boton de cambio de contraseña 
-     //y asi solo el admin ejecute el servicio este 
-     
+ public boolean solicitarCambioContraseña(int idPersona) {
      return personaDAO.solicitoCambioContraseña(idPersona);
  }
+
+ public boolean verificarPasswordActual(Persona usuario, String passActual) {
+     if (usuario == null || passActual == null) return false;
+     Persona pDB = personaDAO.buscarPorUsername(usuario.getUsername());
+     if (pDB == null) return false;
+     if (pDB.isRequiereCambio()) {
+         return passActual.equals(pDB.getPassword());
+     }
+     try {
+         return PasswordHasher.verificar(passActual, pDB.getPassword());
+     } catch (Exception e) {
+         return false;
+     }
+ }
     
+
+ private int inicializarSesion(Persona p) {
+
+    p.setPermisos(permisosDAO.obtenerPermisosPorPersona(p.getIdPersona()));
+    if (p.getPermisos().isEmpty()) return -2;
+
+    
+    SessionManager.getInstance().setUsuario(p);
+    SessionManager.getInstance().setEmpresa(p.getEmpresa());
+
+    
+    List<Estacionamiento> sedes = obtenerSedesAutorizadas(p);
+
+    if (sedes.size() == 1) {
+        SessionManager.getInstance().setEstacionamiento(sedes.get(0));
+        return 1;
+    }
+
+    return 0; 
+}
+
+
 }

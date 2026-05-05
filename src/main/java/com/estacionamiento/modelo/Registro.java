@@ -23,7 +23,7 @@ public class Registro {
     private LocalDateTime fechaRegistro;
     private LocalDateTime fecha_fin_plan;
     private double monto;
- 
+    private int idEstacionamiento;
 
     public Registro() {}
 
@@ -43,6 +43,19 @@ public class Registro {
     }
 
  
+
+    public Registro(Tarifa tarifa, Vehiculo vehiculo, Espacio espacio, Persona persona, EstadoRegistro estadoRegistro,
+            LocalDateTime horaEntrada, LocalDateTime horaSalida, LocalDateTime fechaRegistro, double monto) {
+        this.tarifa = tarifa;
+        this.vehiculo = vehiculo;
+        this.espacio = espacio;
+        this.persona = persona;
+        this.estadoRegistro = estadoRegistro;
+        this.horaEntrada = horaEntrada;
+        this.horaSalida = horaSalida;
+        this.fechaRegistro = fechaRegistro;
+        this.monto = monto;
+    }
 
     public int getIdRegistro() { return idRegistro; }
     public void setIdRegistro(int idRegistro) { this.idRegistro = idRegistro; }
@@ -110,6 +123,10 @@ public class Registro {
     public void setTarifa(Tarifa tarifa) {
         this.tarifa = tarifa;
     }
+
+    public int getIdEstacionamiento() { return idEstacionamiento; }
+    public void setIdEstacionamiento(int idEstacionamiento) { this.idEstacionamiento = idEstacionamiento; }
+
     @Override
     public String toString() {
         return "Registro{" +

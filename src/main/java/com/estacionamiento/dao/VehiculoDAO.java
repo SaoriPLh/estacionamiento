@@ -13,25 +13,28 @@ import java.util.List;
 public class VehiculoDAO {
     
     public Vehiculo insertarVehiculo(Vehiculo vehiculo) {
-        
+
         Vehiculo existente = buscarPorPlaca(vehiculo.getPlaca());
         if (existente != null) {
             return existente;
         }
 
         String sql = "INSERT INTO vehiculo (id_cliente, id_marca, placa, modelo, color) VALUES (?, ?, ?, ?, ?)";
-        
+
         try (Connection c = DBConnection.getConnection();
              PreparedStatement ps = c.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            
-         
+
             if (vehiculo.getCliente() != null && vehiculo.getCliente().getIdCliente() > 0) {
                 ps.setInt(1, vehiculo.getCliente().getIdCliente());
             } else {
                 ps.setNull(1, Types.INTEGER);
             }
-            
-            ps.setInt(2, vehiculo.getMarca().getIdMarca());
+
+            if (vehiculo.getMarca() != null && vehiculo.getMarca().getIdMarca() > 0) {
+                ps.setInt(2, vehiculo.getMarca().getIdMarca());
+            } else {
+                ps.setNull(2, Types.INTEGER);
+            }
             ps.setString(3, vehiculo.getPlaca().trim().toUpperCase());
             ps.setString(4, vehiculo.getModelo()); 
             ps.setString(5, vehiculo.getColor());   
@@ -51,9 +54,9 @@ public class VehiculoDAO {
     }
 
     public Vehiculo buscarPorPlaca(String placa) {
-        
+
         String sql = "SELECT v.*, m.nombre_marca FROM vehiculo v " +
-                     "JOIN marca_vehiculo m ON v.id_marca = m.id_marca " +
+                     "LEFT JOIN marca_vehiculo m ON v.id_marca = m.id_marca " +
                      "WHERE UPPER(v.placa) = UPPER(?)";
         
         try (Connection c = DBConnection.getConnection();
@@ -95,6 +98,19 @@ public class VehiculoDAO {
         }
     }
 
+    public boolean actualizarClienteVehiculo(int idVehiculo, int idCliente) {
+        String sql = "UPDATE vehiculo SET id_cliente = ? WHERE id_vehiculo = ?";
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, idCliente);
+            ps.setInt(2, idVehiculo);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("[VehiculoDAO] Error actualizando cliente: " + e.getMessage());
+            return false;
+        }
+    }
+
     public boolean eliminarVehiculo(int idVehiculo) {
         String sql = "DELETE FROM vehiculo WHERE id_vehiculo = ?";
         try (Connection c = DBConnection.getConnection();
@@ -108,20 +124,63 @@ public class VehiculoDAO {
     }
 
     
+    public List<Vehiculo> buscarPorIdCliente(int idCliente) {
+        String sql = "SELECT v.*, m.nombre_marca FROM vehiculo v " +
+                     "LEFT JOIN marca_vehiculo m ON v.id_marca = m.id_marca " +
+                     "WHERE v.id_cliente = ?";
+        List<Vehiculo> lista = new ArrayList<>();
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, idCliente);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) lista.add(mapearVehiculo(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("[VehiculoDAO] buscarPorIdCliente: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    public List<Vehiculo> buscarPorPlacaContiene(String texto) {
+        if (texto == null || texto.isBlank()) return new ArrayList<>();
+        String sql = "SELECT v.*, m.nombre_marca FROM vehiculo v " +
+                     "LEFT JOIN marca_vehiculo m ON v.id_marca = m.id_marca " +
+                     "WHERE UPPER(v.placa) LIKE UPPER(?) LIMIT 10";
+        List<Vehiculo> lista = new ArrayList<>();
+        try (Connection c = DBConnection.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, "%" + texto.trim() + "%");
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) lista.add(mapearVehiculo(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("[VehiculoDAO] buscarPorPlacaContiene: " + e.getMessage());
+        }
+        return lista;
+    }
+
     private Vehiculo mapearVehiculo(ResultSet rs) throws SQLException {
-        Vehiculo v = new Vehiculo(); 
+        Vehiculo v = new Vehiculo();
         v.setIdVehiculo(rs.getInt("id_vehiculo"));
         v.setPlaca(rs.getString("placa"));
         v.setModelo(rs.getString("modelo"));
         v.setColor(rs.getString("color"));
 
-     
-        Marca m = new Marca();
-        m.setIdMarca(rs.getInt("id_marca"));
-        m.setNombre(rs.getString("nombre_marca"));
-        v.setMarca(m);
+        int idMarca = rs.getInt("id_marca");
+        if (!rs.wasNull()) {
+            Marca m = new Marca();
+            m.setIdMarca(idMarca);
+            m.setNombre(rs.getString("nombre_marca"));
+            v.setMarca(m);
+        }
 
-        
+        int idCliente = rs.getInt("id_cliente");
+        if (!rs.wasNull()) {
+            Cliente cl = new Cliente();
+            cl.setIdCliente(idCliente);
+            v.setCliente(cl);
+        }
+
         return v;
     }
 }

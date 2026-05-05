@@ -11,43 +11,65 @@ import java.util.List;
 public class RegistroDAO {
 
     public Registro insertar(Registro reg) {
-        String sql = "INSERT INTO registro (id_tarifa, id_vehiculo, id_espacio, id_persona, id_estado_registro, id_codigo, hora_entrada, monto) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    String sql = "INSERT INTO registro (id_tarifa, id_vehiculo, id_espacio, id_persona, id_estado_registro, id_codigo, hora_entrada, fecha_registro, fecha_fin_plan, monto, id_estacionamiento) " +
+                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+    try (Connection con = DBConnection.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setInt(1, reg.getTarifa().getIdTarifa());
-            ps.setInt(2, reg.getVehiculo().getIdVehiculo());
-            ps.setInt(3, reg.getEspacio().getIdEspacio());
-            ps.setInt(4, reg.getPersona().getIdPersona());
-            ps.setInt(5, reg.getEstadoRegistro().getIdEstadoRegistro());
+        ps.setInt(1, reg.getTarifa().getIdTarifa());
+        ps.setInt(2, reg.getVehiculo().getIdVehiculo());
+        ps.setInt(3, reg.getEspacio().getIdEspacio());
+        ps.setInt(4, reg.getPersona().getIdPersona());
+        ps.setInt(5, reg.getEstadoRegistro().getIdEstadoRegistro());
 
-            if (reg.getCodigoAcceso() != null) {
-                ps.setInt(6, reg.getCodigoAcceso().getIdCodigo());
-            } else {
-                ps.setNull(6, Types.INTEGER);
-            }
+        if (reg.getCodigoAcceso() != null) {
+            ps.setInt(6, reg.getCodigoAcceso().getIdCodigo());
+        } else {
+            ps.setNull(6, Types.INTEGER);
+        }
 
-            ps.setTimestamp(7, Timestamp.valueOf(reg.getHoraEntrada()));
-            ps.setDouble(8, reg.getMonto());
+        ps.setTimestamp(7, Timestamp.valueOf(reg.getHoraEntrada()));
 
-            if (ps.executeUpdate() > 0) {
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) reg.setIdRegistro(rs.getInt(1));
+        // --- CORRECCIÓN FECHA REGISTRO ---
+        Timestamp tsRegistro = reg.getFechaRegistro() != null 
+                ? Timestamp.valueOf(reg.getFechaRegistro()) 
+                : new Timestamp(System.currentTimeMillis());
+        ps.setTimestamp(8, tsRegistro);
+        
+        // Seteamos en el objeto para que no regrese nulo al servicio
+        if (reg.getFechaRegistro() == null) {
+            reg.setFechaRegistro(tsRegistro.toLocalDateTime());
+        }
+
+        if (reg.getFecha_fin_plan() != null) {
+            ps.setTimestamp(9, Timestamp.valueOf(reg.getFecha_fin_plan()));
+        } else {
+            ps.setNull(9, Types.TIMESTAMP);
+        }
+
+        ps.setDouble(10, reg.getMonto());
+        ps.setInt(11, reg.getIdEstacionamiento());
+
+        if (ps.executeUpdate() > 0) {
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    reg.setIdRegistro(rs.getInt(1));
                 }
             }
-        } catch (SQLException e) {
-            System.err.println("[RegistroDAO] Error al insertar: " + e.getMessage());
-            e.printStackTrace();
+            return reg; // Ahora reg lleva id, fecha_registro y ya traía fecha_fin_plan
         }
-        return reg;
+    } catch (SQLException e) {
+        System.err.println("[RegistroDAO] Error al insertar: " + e.getMessage());
+        e.printStackTrace();
     }
-
-    public Registro buscarPorId(int id) {
+    return null;
+}
+public Registro buscarPorId(int id) {
+        // Aseguramos r.* para traer fecha_fin_plan
         String sql = "SELECT r.*, v.placa, v.modelo, e.codigo AS codigo_espacio, " +
                      "p.nombre AS nombre_empleado, er.nombre_estado AS estado_nombre, " +
-                     "t.id_tarifa, tt.id_tipo_tarifa, tt.descripcion AS tipo_tarifa_desc " +
+                     "t.id_tarifa, t.precio, tt.id_tipo_tarifa, tt.descripcion AS tipo_tarifa_desc " +
                      "FROM registro r " +
                      "JOIN vehiculo v ON r.id_vehiculo = v.id_vehiculo " +
                      "JOIN espacio e ON r.id_espacio = e.id_espacio " +
@@ -64,13 +86,126 @@ public class RegistroDAO {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return mapearRegistroCompleto(rs);
+                    // Este método ya recupera fecha_fin_plan al final
+                    Registro reg = mapearRegistroCompleto(rs); 
+                    if (reg.getTarifa() != null) {
+                        Tarifa completa = new TarifaDAO().buscarPorId(reg.getTarifa().getIdTarifa());
+                        if (completa != null) reg.setTarifa(completa);
+                    }
+                    return reg;
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public Registro buscarActivoPorEspacio(int idEspacio) {
+        String sql =
+            "SELECT r.*, v.placa, v.modelo, e.codigo AS codigo_espacio, " +
+            "p.nombre AS nombre_empleado, er.nombre_estado AS estado_nombre, " +
+            "t.id_tarifa, t.precio, tt.id_tipo_tarifa, tt.descripcion AS tipo_tarifa_desc " +
+            "FROM registro r " +
+            "JOIN vehiculo v ON r.id_vehiculo = v.id_vehiculo " +
+            "JOIN espacio e ON r.id_espacio = e.id_espacio " +
+            "JOIN persona p ON r.id_persona = p.id_persona " +
+            "JOIN estado_registro er ON r.id_estado_registro = er.id_estado_registro " +
+            "JOIN tarifa t ON r.id_tarifa = t.id_tarifa " +
+            "JOIN tipo_tarifa tt ON t.id_tipo_tarifa = tt.id_tipo_tarifa " +
+            "WHERE r.id_espacio = ? AND r.id_estado_registro = ? AND r.hora_salida IS NULL " +
+            "ORDER BY r.hora_entrada DESC LIMIT 1";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, idEspacio);
+            ps.setInt(2, MisConstantes.REGISTRO_ACTIVO);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return mapearRegistroCompleto(rs);
+            }
+        } catch (SQLException e) {
+            System.err.println("[RegistroDAO] buscarActivoPorEspacio: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public List<Registro> listarPorFecha(String fecha) {
+        List<Registro> lista = new ArrayList<>();
+        String sql = "SELECT r.*, v.placa, v.modelo, e.codigo AS codigo_espacio, " +
+                     "p.nombre AS nombre_empleado, er.nombre_estado AS estado_nombre, " +
+                     "t.id_tarifa, t.precio, tt.id_tipo_tarifa, tt.descripcion AS tipo_tarifa_desc " +
+                     "FROM registro r " +
+                     "INNER JOIN vehiculo v ON r.id_vehiculo = v.id_vehiculo " +
+                     "INNER JOIN espacio e ON r.id_espacio = e.id_espacio " +
+                     "INNER JOIN persona p ON r.id_persona = p.id_persona " +
+                     "INNER JOIN estado_registro er ON r.id_estado_registro = er.id_estado_registro " +
+                     "INNER JOIN tarifa t ON r.id_tarifa = t.id_tarifa " +
+                     "INNER JOIN tipo_tarifa tt ON t.id_tipo_tarifa = tt.id_tipo_tarifa " +
+                     "WHERE DATE(r.fecha_registro) = ? " +
+                     "ORDER BY r.hora_entrada DESC";
+
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, fecha);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapearRegistroCompleto(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al listar registros por fecha: " + e.getMessage());
+        }
+        return lista;
+    }
+    public Registro insertar(Registro reg, Connection con) throws SQLException {
+        String sql = "INSERT INTO registro (id_tarifa, id_vehiculo, id_espacio, id_persona, id_estado_registro, id_codigo, hora_entrada, fecha_registro, fecha_fin_plan, monto, id_estacionamiento) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setInt(1, reg.getTarifa().getIdTarifa());
+            ps.setInt(2, reg.getVehiculo().getIdVehiculo());
+            ps.setInt(3, reg.getEspacio().getIdEspacio());
+            ps.setInt(4, reg.getPersona().getIdPersona());
+            ps.setInt(5, reg.getEstadoRegistro().getIdEstadoRegistro());
+
+            if (reg.getCodigoAcceso() != null) {
+                ps.setInt(6, reg.getCodigoAcceso().getIdCodigo());
+            } else {
+                ps.setNull(6, Types.INTEGER);
+            }
+
+            ps.setTimestamp(7, Timestamp.valueOf(reg.getHoraEntrada()));
+            ps.setTimestamp(8, reg.getFechaRegistro() != null
+                    ? Timestamp.valueOf(reg.getFechaRegistro())
+                    : new Timestamp(System.currentTimeMillis()));
+
+            if (reg.getFecha_fin_plan() != null) {
+                ps.setTimestamp(9, Timestamp.valueOf(reg.getFecha_fin_plan()));
+            } else {
+                ps.setNull(9, Types.TIMESTAMP);
+            }
+
+            ps.setDouble(10, reg.getMonto());
+            ps.setInt(11, reg.getIdEstacionamiento());
+
+            if (ps.executeUpdate() > 0) {
+                try (ResultSet rs = ps.getGeneratedKeys()) {
+                    if (rs.next()) reg.setIdRegistro(rs.getInt(1));
+                }
+            }
+        }
+        return reg;
+    }
+
+    public boolean cerrarRegistroActivoPorEspacio(int idEspacio, Timestamp horaSalida, Connection con) throws SQLException {
+        String sql = "UPDATE registro SET hora_salida = ?, id_estado_registro = ? " +
+                     "WHERE id_espacio = ? AND id_estado_registro = ? AND hora_salida IS NULL";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setTimestamp(1, horaSalida);
+            ps.setInt(2, MisConstantes.REGISTRO_FINALIZADO);
+            ps.setInt(3, idEspacio);
+            ps.setInt(4, MisConstantes.REGISTRO_ACTIVO);
+            return ps.executeUpdate() > 0;
+        }
     }
 
     public boolean registrarSalida(int idRegistro, Timestamp horaSalida, double monto) {
@@ -90,45 +225,15 @@ public class RegistroDAO {
         }
     }
 
-    public List<Registro> listarPorFecha(String fecha) {
-        List<Registro> lista = new ArrayList<>();
+ 
 
-        String sql = "SELECT r.*, v.placa, v.modelo, e.codigo AS codigo_espacio, " +
-                     "p.nombre AS nombre_empleado, er.nombre_estado AS estado_nombre, " +
-                     "t.id_tarifa, tt.id_tipo_tarifa, tt.descripcion AS tipo_tarifa_desc " +
-                     "FROM registro r " +
-                     "INNER JOIN vehiculo v ON r.id_vehiculo = v.id_vehiculo " +
-                     "INNER JOIN espacio e ON r.id_espacio = e.id_espacio " +
-                     "INNER JOIN persona p ON r.id_persona = p.id_persona " +
-                     "INNER JOIN estado_registro er ON r.id_estado_registro = er.id_estado_registro " +
-                     "INNER JOIN tarifa t ON r.id_tarifa = t.id_tarifa " +
-                     "INNER JOIN tipo_tarifa tt ON t.id_tipo_tarifa = tt.id_tipo_tarifa " +
-                     "WHERE DATE(r.fecha_registro) = ? " +
-                     "ORDER BY r.hora_entrada DESC";
-
-        try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
-
-            ps.setString(1, fecha);
-
-            try (ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    lista.add(mapearRegistroCompleto(rs));
-                }
-            }
-        } catch (SQLException e) {
-            System.err.println("Error al listar registros por fecha: " + e.getMessage());
-        }
-        return lista;
-    }
-
-    public List<Registro> filtrarRegistros(LocalDateTime inicio, LocalDateTime fin, Integer idTipoTarifa) {
+    public List<Registro> filtrarRegistros(LocalDateTime inicio, LocalDateTime fin, Integer idTipoTarifa, int idEstacionamiento) {
         List<Registro> lista = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder(
             "SELECT r.*, v.placa, v.modelo, e.codigo AS codigo_espacio, " +
             "p.nombre AS nombre_empleado, er.nombre_estado AS estado_nombre, " +
-            "t.id_tarifa, tt.id_tipo_tarifa, tt.descripcion AS tipo_tarifa_desc " +
+            "t.id_tarifa, t.precio, tt.id_tipo_tarifa, tt.descripcion AS tipo_tarifa_desc " +
             "FROM registro r " +
             "INNER JOIN vehiculo v ON r.id_vehiculo = v.id_vehiculo " +
             "INNER JOIN espacio e ON r.id_espacio = e.id_espacio " +
@@ -136,29 +241,24 @@ public class RegistroDAO {
             "INNER JOIN estado_registro er ON r.id_estado_registro = er.id_estado_registro " +
             "INNER JOIN tarifa t ON r.id_tarifa = t.id_tarifa " +
             "INNER JOIN tipo_tarifa tt ON t.id_tipo_tarifa = tt.id_tipo_tarifa " +
-            "WHERE 1=1 "
+            "WHERE r.id_estacionamiento = ? "
         );
 
         List<Object> params = new ArrayList<>();
+        params.add(idEstacionamiento);
 
         if (inicio != null && fin == null) {
-          
-            sql.append("AND r.fecha_registro BETWEEN ? AND ? ");
+            sql.append("AND r.hora_entrada BETWEEN ? AND ? ");
             params.add(Timestamp.valueOf(inicio.toLocalDate().atStartOfDay()));
             params.add(Timestamp.valueOf(inicio.toLocalDate().atTime(23, 59, 59)));
-
         } else if (inicio != null) {
-            // Rango con inicio y fin
-            sql.append("AND r.fecha_registro BETWEEN ? AND ? ");
+            sql.append("AND r.hora_entrada BETWEEN ? AND ? ");
             params.add(Timestamp.valueOf(inicio));
             params.add(Timestamp.valueOf(fin));
-
         } else if (fin != null) {
-            // Solo fecha fin = todo hasta esa fecha
-            sql.append("AND r.fecha_registro <= ? ");
+            sql.append("AND r.hora_entrada <= ? ");
             params.add(Timestamp.valueOf(fin));
         }
-        // Si ambos son null = sin filtro de fecha = todos los registros
 
         if (idTipoTarifa != null && idTipoTarifa > 0) {
             sql.append("AND tt.id_tipo_tarifa = ? ");
@@ -212,6 +312,7 @@ public class RegistroDAO {
 
         Tarifa t = new Tarifa();
         t.setIdTarifa(rs.getInt("id_tarifa"));
+        t.setPrecio(rs.getDouble("precio"));
         t.setTipoTarifa(tt);
 
         Registro reg = new Registro();
@@ -230,6 +331,10 @@ public class RegistroDAO {
         if (tsFecha != null) {
             reg.setFechaRegistro(tsFecha.toLocalDateTime());
         }
+    Timestamp tsFinPlan = rs.getTimestamp("fecha_fin_plan");
+    if (tsFinPlan != null) {
+        reg.setFecha_fin_plan(tsFinPlan.toLocalDateTime());
+    }
 
         reg.setVehiculo(v);
         reg.setEspacio(esp);

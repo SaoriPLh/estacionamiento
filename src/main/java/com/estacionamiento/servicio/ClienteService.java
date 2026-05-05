@@ -6,6 +6,7 @@ import com.estacionamiento.util.DBConnection;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -39,7 +40,14 @@ public class ClienteService {
             }
         }
     }
-
+public List<Cliente> listarClientesPensionadosPorEstacionamiento(int idEstacionamiento) {
+    try {
+        return clienteDAO.listarClientesPensionadosPorEstacionamiento(idEstacionamiento);
+    } catch (Exception e) {
+        System.err.println("Error en service (clientes por sede): " + e.getMessage());
+        return new ArrayList<>();
+    }
+}
   
     public Cliente buscarPorId(int idCliente) {
         try {

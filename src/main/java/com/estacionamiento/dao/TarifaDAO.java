@@ -2,6 +2,8 @@ package com.estacionamiento.dao;
 
 import com.estacionamiento.modelo.*;
 import com.estacionamiento.util.DBConnection;
+import com.estacionamiento.util.MisConstantes;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +58,33 @@ public class TarifaDAO {
 
         return tarifa;
     }
+    // NUEVO MÉTODO: Crucial para tu lógica de convenios dinámicos
+    public Tarifa obtenerTarifaNormalPorSede(int idEstacionamiento) {
+        Tarifa t = null;
+        String sql = "SELECT t.*, tc.nombre_cobro, tt.descripcion, " +
+                     "ud.tipo_unidad, ud.factor_conversion_minutos " +
+                     "FROM tarifa t " +
+                     "INNER JOIN tipo_cobro tc ON t.id_tipo_cobro = tc.id_tipo_cobro " +
+                     "INNER JOIN tipo_tarifa tt ON t.id_tipo_tarifa = tt.id_tipo_tarifa " +
+                     "LEFT JOIN unidad_descuento ud ON t.id_unidad_descuento = ud.id_unidad_descuento " +
+                     "WHERE t.id_estacionamiento = ? AND t.id_tipo_tarifa = ?";
 
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, idEstacionamiento);
+            ps.setInt(2, MisConstantes.TARIFA_NORMAL); // Busca específicamente la normal
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    t = mapearTarifa(rs);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return t;
+    }
     public boolean actualizar(Tarifa tarifa) {
         String sql = "UPDATE tarifa SET " +
                      "id_estacionamiento = ?, " +
@@ -112,36 +140,22 @@ public class TarifaDAO {
     public List<Tarifa> listarPorEstacionamiento(int idEstacionamiento) {
         List<Tarifa> lista = new ArrayList<>();
 
-        String sql = "SELECT t.*, tc.nombre_cobro, tt.nombre_tipo_tarifa " +
+        String sql = "SELECT t.*, tc.nombre_cobro, tt.descripcion, " +
+                     "ud.tipo_unidad, ud.factor_conversion_minutos " +
                      "FROM tarifa t " +
                      "INNER JOIN tipo_cobro tc ON t.id_tipo_cobro = tc.id_tipo_cobro " +
                      "INNER JOIN tipo_tarifa tt ON t.id_tipo_tarifa = tt.id_tipo_tarifa " +
+                     "LEFT JOIN unidad_descuento ud ON t.id_unidad_descuento = ud.id_unidad_descuento " +
                      "WHERE t.id_estacionamiento = ?";
 
         try (Connection con = DBConnection.getConnection();
              PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, idEstacionamiento);
-            ResultSet rs = ps.executeQuery();
-
-            while (rs.next()) {
-                Tarifa t = new Tarifa();
-                t.setIdTarifa(rs.getInt("id_tarifa"));
-                t.setPrecio(rs.getDouble("precio"));
-                t.setValorDescuento(rs.getDouble("valor_descuento"));
-                t.setCantidad_descuento(rs.getInt("cantidad_descuento"));
-
-                TipoCobro tc = new TipoCobro(
-                        rs.getInt("id_tipo_cobro"),
-                        rs.getString("nombre_cobro"));
-                t.setTipoCobro(tc);
-
-                TipoTarifa tt = new TipoTarifa();
-                tt.setIdTipoTarifa(rs.getInt("id_tipo_tarifa"));
-                tt.setDescripcion(rs.getString("nombre_tipo_tarifa"));
-                t.setTipoTarifa(tt);
-
-                lista.add(t);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapearTarifa(rs));
+                }
             }
 
         } catch (SQLException e) {
@@ -169,10 +183,12 @@ public class TarifaDAO {
     public Tarifa buscarPorId(int idTarifa) {
         Tarifa t = null;
 
-        String sql = "SELECT t.*, tc.nombre_cobro, tt.nombre_tipo_tarifa " +
+        String sql = "SELECT t.*, tc.nombre_cobro, tt.descripcion, " +
+                     "ud.tipo_unidad, ud.factor_conversion_minutos " +
                      "FROM tarifa t " +
                      "INNER JOIN tipo_cobro tc ON t.id_tipo_cobro = tc.id_tipo_cobro " +
                      "INNER JOIN tipo_tarifa tt ON t.id_tipo_tarifa = tt.id_tipo_tarifa " +
+                     "LEFT JOIN unidad_descuento ud ON t.id_unidad_descuento = ud.id_unidad_descuento " +
                      "WHERE t.id_tarifa = ?";
 
         try (Connection con = DBConnection.getConnection();
@@ -195,12 +211,48 @@ public class TarifaDAO {
 
                 TipoTarifa tt = new TipoTarifa();
                 tt.setIdTipoTarifa(rs.getInt("id_tipo_tarifa"));
-                tt.setDescripcion(rs.getString("nombre_tipo_tarifa"));
+                tt.setDescripcion(rs.getString("descripcion"));
                 t.setTipoTarifa(tt);
+
+                int idUnidad = rs.getInt("id_unidad_descuento");
+                if (!rs.wasNull()) {
+                    UnidadDescuento ud = new UnidadDescuento(
+                            idUnidad,
+                            rs.getString("tipo_unidad"),
+                            rs.getInt("factor_conversion_minutos"));
+                    t.setUnidadDescuento(ud);
+                }
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        return t;
+    }
+    // Método auxiliar para mantener el estilo limpio
+    private Tarifa mapearTarifa(ResultSet rs) throws SQLException {
+        Tarifa t = new Tarifa();
+        t.setIdTarifa(rs.getInt("id_tarifa"));
+        t.setPrecio(rs.getDouble("precio"));
+        t.setValorDescuento(rs.getDouble("valor_descuento"));
+        t.setCantidad_descuento(rs.getInt("cantidad_descuento"));
+
+        TipoCobro tc = new TipoCobro(rs.getInt("id_tipo_cobro"), rs.getString("nombre_cobro"));
+        t.setTipoCobro(tc);
+
+        TipoTarifa tt = new TipoTarifa();
+        tt.setIdTipoTarifa(rs.getInt("id_tipo_tarifa"));
+        tt.setDescripcion(rs.getString("descripcion"));
+        t.setTipoTarifa(tt);
+        
+        int idUnidad = rs.getInt("id_unidad_descuento");
+        if (!rs.wasNull()) {
+            UnidadDescuento ud = new UnidadDescuento();
+            ud.setIdUnidadDescuento(idUnidad);
+            ud.setTipoUnidad(rs.getString("tipo_unidad"));
+            ud.setFactorConversionMinutos(rs.getInt("factor_conversion_minutos"));
+            t.setUnidadDescuento(ud);
         }
 
         return t;

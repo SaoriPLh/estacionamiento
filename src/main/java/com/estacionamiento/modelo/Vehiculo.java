@@ -15,23 +15,32 @@ public class Vehiculo {
 
     public Vehiculo() {}
 
-    public Vehiculo(int idVehiculo, Cliente cliente, String placa, String modelo, String color, Marca marca) {
+
+    public Vehiculo(int idVehiculo, Cliente cliente, Marca marca, String placa, String modelo, String color) {
         this.idVehiculo = idVehiculo;
         this.cliente = cliente;
+        this.marca = marca;
         this.placa = placa;
         this.modelo = modelo;
         this.color = color;
-        this.marca = marca;
     }
-    
-    
-    public Vehiculo( Cliente cliente, String placa, String modelo, String color, Marca marca) {
-      
+
+
+    public Vehiculo(Cliente cliente, Marca marca, String placa, String modelo, String color) {
         this.cliente = cliente;
+        this.marca = marca;
         this.placa = placa;
         this.modelo = modelo;
         this.color = color;
+    }
+
+    
+
+    public Vehiculo(Marca marca, String placa, String modelo, String color) {
         this.marca = marca;
+        this.placa = placa;
+        this.modelo = modelo;
+        this.color = color;
     }
 
 

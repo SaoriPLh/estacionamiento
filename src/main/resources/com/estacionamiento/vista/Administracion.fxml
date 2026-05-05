@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.estacionamiento.controlador.AdministracionController"
+      styleClass="content-area" spacing="24">
+
+    <Label text="Panel de Administración" styleClass="page-title"/>
+
+    <!-- Stats principales -->
+    <HBox spacing="16">
+        <HBox styleClass="card-stat" spacing="12" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+            <VBox styleClass="stat-icon-green" alignment="CENTER" minWidth="44" minHeight="44">
+               <Label text="\$" style="-fx-font-size:20px;-fx-font-weight:bold;-fx-text-fill:#b45309;"/>
+            </VBox>
+            <VBox spacing="4">
+                <Label text="Ingresos Totales" styleClass="stat-label"/>
+                <Label fx:id="lblIngresos" text="\$0" styleClass="stat-value"/>
+            </VBox>
+        </HBox>
+        <HBox styleClass="card-stat" spacing="12" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+            <VBox styleClass="stat-icon-blue" alignment="CENTER" minWidth="44" minHeight="44">
+                <Label text="P" style="-fx-font-size:20px;-fx-font-weight:bold;-fx-text-fill:#2563eb;"/>
+            </VBox>
+            <VBox spacing="4">
+                <Label text="Tasa de Ocupación" styleClass="stat-label"/>
+                <Label fx:id="lblOcupacion" text="0%" styleClass="stat-value"/>
+            </VBox>
+        </HBox>
+        <HBox styleClass="card-stat" spacing="12" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+            <VBox styleClass="stat-icon-purple" alignment="CENTER" minWidth="44" minHeight="44">
+                <Label text="👤" style="-fx-font-size:20px;"/>
+            </VBox>
+            <VBox spacing="4">
+                <Label text="Operadores Activos" styleClass="stat-label"/>
+                <Label fx:id="lblOperadores" text="0" styleClass="stat-value"/>
+            </VBox>
+        </HBox>
+        <HBox styleClass="card-stat" spacing="12" alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+            <VBox styleClass="stat-icon-amber" alignment="CENTER" minWidth="44" minHeight="44">
+               <Label text="\$" style="-fx-font-size:20px;-fx-font-weight:bold;-fx-text-fill:#16a34a;"/>
+            </VBox>
+            <VBox spacing="4">
+                <Label text="Ingreso Promedio/Día" styleClass="stat-label"/>
+                <Label fx:id="lblPromedioDia" text="\$0" styleClass="stat-value"/>
+            </VBox>
+        </HBox>
+    </HBox>
+
+    <!-- Fila de gráficas y nómina -->
+    <HBox spacing="16" VBox.vgrow="ALWAYS">
+
+        <!-- Gráfica de ingresos -->
+        <VBox styleClass="card" HBox.hgrow="ALWAYS" spacing="12">
+            <Label text="Ingresos por Tipo de Tarifa" style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#1e293b;"/>
+            <BarChart fx:id="barChart" VBox.vgrow="ALWAYS" minHeight="260">
+                <xAxis><CategoryAxis label="Tipo Tarifa"/></xAxis>
+                <yAxis><NumberAxis label="Ingresos (\$)"/></yAxis>
+            </BarChart>
+        </VBox>
+
+        <!-- Nómina -->
+        <VBox styleClass="card" minWidth="340" spacing="12">
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <Label text="Nómina" style="-fx-font-size:15px;-fx-font-weight:bold;-fx-text-fill:#1e293b;" HBox.hgrow="ALWAYS"/>
+                <Button text="⟳" styleClass="btn-secondary" onAction="#recargar" maxWidth="36" maxHeight="36"/>
+            </HBox>
+            <HBox spacing="12" style="-fx-background-color:#f8fafc;-fx-background-radius:8;-fx-padding:12;">
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label text="Total empleados" style="-fx-font-size:11px;-fx-text-fill:#64748b;"/>
+                    <Label fx:id="lblTotalEmpleados" text="0" style="-fx-font-size:18px;-fx-font-weight:bold;-fx-text-fill:#0f172a;"/>
+                </VBox>
+                <VBox spacing="4" HBox.hgrow="ALWAYS">
+                    <Label text="Nómina total" style="-fx-font-size:11px;-fx-text-fill:#64748b;"/>
+                    <Label fx:id="lblNominaTotal" text="\$0" style="-fx-font-size:18px;-fx-font-weight:bold;-fx-text-fill:#dc2626;"/>
+                </VBox>
+            </HBox>
+            <ScrollPane VBox.vgrow="ALWAYS" fitToWidth="true" styleClass="scroll-pane">
+                <TableView fx:id="tablaEmpleados" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="colNombre" text="Nombre" prefWidth="160"/>
+                        <TableColumn fx:id="colRol" text="Rol" prefWidth="90"/>
+                        <TableColumn fx:id="colSalario" text="Salario" prefWidth="80"/>
+                    </columns>
+                </TableView>
+            </ScrollPane>
+        </VBox>
+
+    </HBox>
+
+</VBox>

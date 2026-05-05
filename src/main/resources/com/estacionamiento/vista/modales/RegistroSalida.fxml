@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<ScrollPane fitToWidth="true" pannable="true" style="-fx-background-color: transparent; -fx-background: transparent;" 
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="com.estacionamiento.controlador.RegistroSalidaController">
+    
+    <content>
+        <VBox styleClass="modal-root" spacing="20" minWidth="520">
+            <!-- Padding para que el contenido no toque los bordes del ScrollPane -->
+            <padding>
+                <Insets top="20" right="25" bottom="20" left="25"/>
+            </padding>
+
+            <Label text="Registrar Salida" styleClass="modal-title"/>
+            <Label text="Busca el registro por placa o número de espacio" styleClass="modal-subtitle"/>
+
+            <Separator/>
+
+            <!-- Búsqueda -->
+            <HBox spacing="12" alignment="CENTER_LEFT">
+                <TextField fx:id="txtBuscar" promptText="Placa o número de espacio..." HBox.hgrow="ALWAYS"
+                           styleClass="text-field"/>
+                <Button text="Buscar" styleClass="btn-secondary" onAction="#buscar"/>
+            </HBox>
+
+            <!-- Info del registro: se activa dinámicamente en el controlador -->
+            <VBox fx:id="panelInfo" spacing="12" visible="false" managed="false">
+                <Separator/>
+                <VBox styleClass="card" spacing="10">
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Placa:" styleClass="form-label" minWidth="120"/>
+                        <Label fx:id="lblPlaca" text="—" style="-fx-font-weight:bold;"/>
+                    </HBox>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Modelo:" styleClass="form-label" minWidth="120"/>
+                        <Label fx:id="lblModelo" text="—" style="-fx-text-fill:#475569;"/>
+                    </HBox>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Espacio:" styleClass="form-label" minWidth="120"/>
+                        <Label fx:id="lblEspacio" text="—"/>
+                    </HBox>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Hora Entrada:" styleClass="form-label" minWidth="120"/>
+                        <Label fx:id="lblEntrada" text="—"/>
+                    </HBox>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Vigente hasta:" styleClass="form-label" minWidth="120"/>
+                        <Label fx:id="lblVigente" text="—" style="-fx-text-fill:#92400e;"/>
+                    </HBox>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Tarifa:" styleClass="form-label" minWidth="120"/>
+                        <Label fx:id="lblTarifa" text="—"/>
+                    </HBox>
+                    <Separator/>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Monto estimado:" styleClass="form-label" minWidth="120"/>
+                        <Label fx:id="lblMonto" text="\$0.00"
+                               style="-fx-font-size:20px;-fx-font-weight:bold;-fx-text-fill:#16a34a;"/>
+                    </HBox>
+                    <Label fx:id="lblCodigo" text="" visible="false" managed="false"
+                           style="-fx-text-fill:#2563eb;-fx-font-size:12px;-fx-font-weight:bold;"/>
+                </VBox>
+            </VBox>
+
+            <!-- Error -->
+            <Label fx:id="lblError" text="" style="-fx-text-fill:#ef4444;" visible="false" managed="false" wrapText="true"/>
+
+            <Separator/>
+
+            <!-- Botones de Acción -->
+            <HBox spacing="12" alignment="CENTER_RIGHT">
+                <Button text="Cancelar" styleClass="btn-secondary" onAction="#cancelar"/>
+                <Button fx:id="btnConfirmar" text="✓  Confirmar Salida" styleClass="btn-primary"
+                        onAction="#confirmar" disable="true"/>
+            </HBox>
+        </VBox>
+    </content>
+</ScrollPane>

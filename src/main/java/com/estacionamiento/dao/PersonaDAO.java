@@ -4,49 +4,69 @@ import com.estacionamiento.modelo.Empresa;
 import com.estacionamiento.modelo.Persona;
 import com.estacionamiento.modelo.Rol;
 import com.estacionamiento.util.DBConnection;
+import com.estacionamiento.util.PasswordHasher;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PersonaDAO {
 
-    public Persona insertar(Persona p) {
-        String sql = "INSERT INTO persona (id_empresa, id_rol, nombre, apellido_paterno, apellido_materno, username, password, salario) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+  public Persona insertar(Persona p) {
+    String sql = "INSERT INTO persona (id_empresa, id_rol, nombre, apellido_paterno, apellido_materno, username, password, salario, requiere_cambio) "
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-        try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+    try (Connection con = DBConnection.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setInt(1, p.getEmpresa().getIdEmpresa());
-            ps.setInt(2, p.getRol().getIdRol());
-            ps.setString(3, p.getNombre());
-            ps.setString(4, p.getApellidoPaterno());
-            ps.setString(5, p.getApellidoMaterno());
-            ps.setString(6, p.getUsername());
-            ps.setString(7, p.getPassword());
-            
-            // Manejo de nulo para salario
-            if (p.getSalario()!= null) {
-                ps.setDouble(8, p.getSalario());
-            } else {
-                ps.setNull(8, Types.DECIMAL);
-            }
+        ps.setInt(1, p.getEmpresa().getIdEmpresa());
+        ps.setInt(2, p.getRol().getIdRol());
+        ps.setString(3, p.getNombre());
+        ps.setString(4, p.getApellidoPaterno());
+        ps.setString(5, p.getApellidoMaterno());
+        ps.setString(6, p.getUsername());
+        ps.setString(7, p.getPassword());
 
-            int filasAfectadas = ps.executeUpdate();
+        // Manejo de nulo para salario
+        if (p.getSalario() != null) {
+            ps.setDouble(8, p.getSalario());
+        } else {
+            ps.setNull(8, Types.DECIMAL);
+        }
 
-            if (filasAfectadas > 0) {
-                try (ResultSet rs = ps.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        p.setIdPersona(rs.getInt(1));
-                    }
+        ps.setInt(9, p.isRequiereCambio() ? 1 : 0);
+
+        int filasAfectadas = ps.executeUpdate();
+
+        if (filasAfectadas > 0) {
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    p.setIdPersona(rs.getInt(1));
                 }
             }
-            System.out.println("Persona guardada con éxito con ID: " + p.getIdPersona());
+        }
 
+        System.out.println("Persona guardada con éxito con ID: " + p.getIdPersona());
+
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return p;
+}
+    public boolean actualizarDatos(int idPersona, String nombre, String apellidoP, String apellidoM, Double salario) {
+        String sql = "UPDATE persona SET nombre=?, apellido_paterno=?, apellido_materno=?, salario=? WHERE id_persona=?";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, nombre);
+            ps.setString(2, apellidoP);
+            ps.setString(3, apellidoM != null ? apellidoM : "");
+            if (salario != null) ps.setDouble(4, salario); else ps.setNull(4, Types.DECIMAL);
+            ps.setInt(5, idPersona);
+            return ps.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
+            return false;
         }
-        return p;
     }
 
     public boolean actualizar(Persona p) {
@@ -197,14 +217,20 @@ public class PersonaDAO {
     }
 
     public Persona cambiarContrasena(int idPersona, String contrasenaNueva) {
+
+        if (contrasenaNueva == null || contrasenaNueva.trim().isEmpty()) {
+            return null; // o lanzar excepción
+        }
         String sqlUpdate = "UPDATE persona SET password = ?, requiere_cambio = 0 WHERE id_persona = ?";
+        
         String sqlSelect = "SELECT p.*, r.nombre_rol, e.nombre_comercial, e.razon_social "
                 + "FROM persona p JOIN rol r ON p.id_rol = r.id_rol "
                 + "JOIN empresa e ON p.id_empresa = e.id_empresa WHERE p.id_persona = ?";
 
         try (Connection con = DBConnection.getConnection()) {
             try (PreparedStatement psUpdate = con.prepareStatement(sqlUpdate)) {
-                psUpdate.setString(1, contrasenaNueva);
+                String contraHash =  PasswordHasher.hash(contrasenaNueva);
+                psUpdate.setString(1, contraHash);
                 psUpdate.setInt(2, idPersona);
 
                 if (psUpdate.executeUpdate() > 0) {

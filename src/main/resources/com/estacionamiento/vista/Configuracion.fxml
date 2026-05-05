@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.estacionamiento.controlador.ConfiguracionController"
+      styleClass="content-area" spacing="24">
+
+    <Label text="Configuración" styleClass="page-title"/>
+
+    <TabPane fx:id="tabPane" VBox.vgrow="ALWAYS" styleClass="tab-pane">
+
+        <!-- ===== TAB PERSONAL ===== -->
+        <Tab text="Personal" closable="false">
+            <VBox spacing="16" style="-fx-padding:16 0 0 0;">
+
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Label text="Empleados de la sede" style="-fx-font-size:15px;-fx-font-weight:bold;" HBox.hgrow="ALWAYS"/>
+                    <Button text="+ Nuevo Empleado" styleClass="btn-primary" onAction="#nuevoEmpleado"/>
+                    <Button text="⟳ Recargar" styleClass="btn-secondary" onAction="#recargarPersonal"/>
+                </HBox>
+
+                <TableView fx:id="tablaPersonal" VBox.vgrow="ALWAYS" >
+                <columnResizePolicy>
+        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+    </columnResizePolicy>
+                    <columns>
+                        <TableColumn fx:id="colPNombre" text="Nombre" prefWidth="280"/>
+                        <TableColumn fx:id="colPUsername" text="Usuario" prefWidth="120"/>
+                        <TableColumn fx:id="colPRol" text="Rol" prefWidth="100"/>
+                        <TableColumn fx:id="colPSalario" text="Salario" prefWidth="100"/>
+                        <TableColumn fx:id="colPEstado" text="Estado" prefWidth="100"/>
+                        <TableColumn fx:id="colPAcciones" text="Acciones" prefWidth="300"/>
+                    </columns>
+                </TableView>
+
+            </VBox>
+        </Tab>
+
+        <!-- ===== TAB TARIFAS ===== -->
+        <Tab text="Tarifas" closable="false">
+            <VBox spacing="16" style="-fx-padding:16 0 0 0;">
+
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Label text="Tarifas de la sede" style="-fx-font-size:15px;-fx-font-weight:bold;" HBox.hgrow="ALWAYS"/>
+                    <Button text="+ Nueva Tarifa" styleClass="btn-primary" onAction="#nuevaTarifa"/>
+                    <Button text="⟳ Recargar" styleClass="btn-secondary" onAction="#recargarTarifas"/>
+                </HBox>
+
+                <TableView fx:id="tablaTarifas" VBox.vgrow="ALWAYS" >
+                <columnResizePolicy>
+        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+    </columnResizePolicy>
+                    <columns>
+                        <TableColumn fx:id="colTTipo" text="Tipo" prefWidth="140"/>
+                        <TableColumn fx:id="colTCobro" text="Cobro" prefWidth="100"/>
+                        <TableColumn fx:id="colTPrecio" text="Precio" prefWidth="90"/>
+                        <TableColumn fx:id="colTDescuento" text="Descuento" prefWidth="100"/>
+                        <TableColumn fx:id="colTAcciones" text="Acciones" prefWidth="160"/>
+                    </columns>
+                </TableView>
+
+            </VBox>
+        </Tab>
+
+        <!-- ===== TAB CÓDIGOS DE ACCESO ===== -->
+        <Tab text="Códigos de Acceso" closable="false">
+            <VBox spacing="16" style="-fx-padding:16 0 0 0;">
+
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Label text="Códigos de acceso" style="-fx-font-size:15px;-fx-font-weight:bold;"/>
+                    <TextField fx:id="txtBuscarCodigo" promptText="Buscar por código o cliente..."
+                               styleClass="text-field" HBox.hgrow="ALWAYS"/>
+                    <Button text="Recargar" styleClass="btn-secondary" onAction="#recargarCodigos"/>
+                </HBox>
+
+                <TableView fx:id="tablaCodigos" VBox.vgrow="ALWAYS" >
+                <columnResizePolicy>
+        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+    </columnResizePolicy>
+                    <columns>
+                        <TableColumn fx:id="colCCodigo" text="Código" prefWidth="180"/>
+                        <TableColumn fx:id="colCCliente" text="Cliente" prefWidth="180"/>
+                        <TableColumn fx:id="colCEstado" text="Estado" prefWidth="100"/>
+                        <TableColumn fx:id="colCFechaFin" text="Vence" prefWidth="120"/>
+                        <TableColumn fx:id="colCAcciones" text="Acciones" prefWidth="160"/>
+                    </columns>
+                </TableView>
+
+            </VBox>
+        </Tab>
+
+        <!-- ===== TAB ESPACIOS ===== -->
+        <Tab text="Espacios" closable="false">
+            <VBox spacing="16" style="-fx-padding:16 0 0 0;">
+
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Label text="Espacios de la sede" style="-fx-font-size:15px;-fx-font-weight:bold;" HBox.hgrow="ALWAYS"/>
+                    <Button text="+ Nuevo Espacio" styleClass="btn-primary" onAction="#nuevoEspacio"/>
+                    <Button text="⟳ Recargar" styleClass="btn-secondary" onAction="#recargarEspacios"/>
+                </HBox>
+
+                <TableView fx:id="tablaEspacios" VBox.vgrow="ALWAYS" >
+                <columnResizePolicy>
+        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+    </columnResizePolicy>
+                    <columns>
+                        <TableColumn fx:id="colECodigo" text="Código" prefWidth="120"/>
+                        <TableColumn fx:id="colETipo" text="Tipo" prefWidth="120"/>
+                        <TableColumn fx:id="colEEstado" text="Estado" prefWidth="120"/>
+                        <TableColumn fx:id="colEAcciones" text="Acciones" prefWidth="120"/>
+                    </columns>
+                </TableView>
+
+            </VBox>
+        </Tab>
+
+        <!-- ===== TAB ESTACIONAMIENTOS ===== -->
+        <Tab text="Sedes" closable="false">
+            <VBox spacing="16" style="-fx-padding:16 0 0 0;">
+
+                <HBox spacing="12" alignment="CENTER_LEFT">
+                    <Label text="Estacionamientos de la empresa" style="-fx-font-size:15px;-fx-font-weight:bold;" HBox.hgrow="ALWAYS"/>
+                    <Button text="+ Nueva Sede" styleClass="btn-primary" onAction="#nuevaSede"/>
+                    <Button text="⟳ Recargar" styleClass="btn-secondary" onAction="#recargarSedes"/>
+                </HBox>
+
+                <TableView fx:id="tablaSedes" VBox.vgrow="ALWAYS" >
+                <columnResizePolicy>
+        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+    </columnResizePolicy>
+                    <columns>
+                        <TableColumn fx:id="colSNombre" text="Nombre" prefWidth="200"/>
+                        <TableColumn fx:id="colSDireccion" text="Dirección" prefWidth="220"/>
+                        <TableColumn fx:id="colSEstado" text="Estado" prefWidth="100"/>
+                        <TableColumn fx:id="colSAcciones" text="Acciones" prefWidth="120"/>
+                    </columns>
+                </TableView>
+
+            </VBox>
+        </Tab>
+
+        <!-- ===== TAB IMPRESORAS ===== -->
+        <Tab text="Impresoras" closable="false">
+            <VBox spacing="20" style="-fx-padding:16 0 0 0;">
+
+                <Label text="Impresoras configuradas" style="-fx-font-size:15px;-fx-font-weight:bold;"/>
+                <Label text="Cada tipo de documento recuerda su propia impresora. Al eliminar una, la proxima impresion te pedira seleccionar de nuevo."
+                       style="-fx-text-fill:#64748b; -fx-font-size:12px;" wrapText="true"/>
+
+                <VBox styleClass="card" spacing="12">
+                    <Label text="Tickets (Entrada / Salida / Pension)"
+                           style="-fx-font-weight:bold; -fx-font-size:13px;"/>
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label fx:id="lblImpresoraTickets" text="No configurada"
+                               style="-fx-text-fill:#475569;" HBox.hgrow="ALWAYS"/>
+                        <Button text="Eliminar" styleClass="btn-danger"
+                                onAction="#eliminarImpresoraTickets"/>
+                    </HBox>
+                </VBox>
+
+                <VBox styleClass="card" spacing="12">
+                    <Label text="Reportes" style="-fx-font-weight:bold; -fx-font-size:13px;"/>
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label fx:id="lblImpresoraReportes" text="No configurada"
+                               style="-fx-text-fill:#475569;" HBox.hgrow="ALWAYS"/>
+                        <Button text="Eliminar" styleClass="btn-danger"
+                                onAction="#eliminarImpresoraReportes"/>
+                    </HBox>
+                </VBox>
+
+            </VBox>
+        </Tab>
+
+    </TabPane>
+
+    <!-- ===== FORM TARIFA ===== -->
+    <VBox fx:id="panelFormTarifa" styleClass="card" spacing="14" visible="false" managed="false">
+        <Label fx:id="lblFormTarifaTitulo" text="Nueva Tarifa" style="-fx-font-size:15px;-fx-font-weight:bold;"/>
+        <HBox spacing="14">
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Tipo de Tarifa" styleClass="form-label"/>
+                <ComboBox fx:id="cmbTipoTarifa" maxWidth="Infinity"/>
+            </VBox>
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Tipo de Cobro" styleClass="form-label"/>
+                <ComboBox fx:id="cmbTipoCobro" maxWidth="Infinity"/>
+            </VBox>
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Precio ($)" styleClass="form-label"/>
+                <TextField fx:id="txtPrecio" promptText="0.00" styleClass="text-field"/>
+            </VBox>
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Descuento (%)" styleClass="form-label"/>
+                <TextField fx:id="txtDescuento" promptText="0" styleClass="text-field"/>
+            </VBox>
+        </HBox>
+
+        <!-- Campos extra para Convenio -->
+        <VBox fx:id="panelConvenio" spacing="10" visible="false" managed="false"
+              style="-fx-background-color:#fef3c7; -fx-background-radius:8;
+                     -fx-border-color:#fcd34d; -fx-border-radius:8; -fx-padding:12;">
+            <Label text="Configuración de Convenio"
+                   style="-fx-font-size:12px; -fx-font-weight:bold; -fx-text-fill:#92400e;"/>
+            <HBox spacing="14">
+                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                    <Label text="Unidad de descuento" styleClass="form-label"/>
+                    <ComboBox fx:id="cmbUnidadDescuento" promptText="Hora / Día / Mes" maxWidth="Infinity"/>
+                </VBox>
+                <VBox spacing="6" HBox.hgrow="ALWAYS">
+                    <Label text="Cantidad" styleClass="form-label"/>
+                    <TextField fx:id="txtCantidadDescuento" promptText="Ej. 2" styleClass="text-field"/>
+                </VBox>
+            </HBox>
+        </VBox>
+
+        <HBox spacing="12" alignment="CENTER_RIGHT">
+            <Button text="Cancelar" styleClass="btn-secondary" onAction="#cancelarFormTarifa"/>
+            <Button text="Guardar Tarifa" styleClass="btn-primary" onAction="#guardarTarifa"/>
+        </HBox>
+        <Label fx:id="lblErrorTarifa" text="" style="-fx-text-fill:#ef4444;" visible="false" managed="false"/>
+    </VBox>
+
+    <!-- ===== FORM EMPLEADO ===== -->
+    <VBox fx:id="panelFormEmpleado" styleClass="card" spacing="14" visible="false" managed="false">
+        <Label fx:id="lblFormEmpleadoTitulo" text="Nuevo Empleado" style="-fx-font-size:15px;-fx-font-weight:bold;"/>
+        <HBox spacing="14">
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Nombre *" styleClass="form-label"/>
+                <TextField fx:id="txtENombre" styleClass="text-field"/>
+            </VBox>
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Apellido Paterno *" styleClass="form-label"/>
+                <TextField fx:id="txtEApellidoP" styleClass="text-field"/>
+            </VBox>
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Apellido Materno" styleClass="form-label"/>
+                <TextField fx:id="txtEApellidoM" styleClass="text-field"/>
+            </VBox>
+        </HBox>
+        <HBox spacing="14">
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Usuario *" styleClass="form-label"/>
+                <TextField fx:id="txtEUsername" styleClass="text-field"/>
+            </VBox>
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label fx:id="lblEPasswordHint" text="Contraseña *" styleClass="form-label"/>
+                <PasswordField fx:id="txtEPassword" promptText="Dejar en blanco para no cambiar" styleClass="password-field"/>
+            </VBox>
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Confirmar Contraseña" styleClass="form-label"/>
+                <PasswordField fx:id="txtEConfirmPassword" styleClass="password-field"/>
+            </VBox>
+        </HBox>
+        <HBox spacing="14">
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Salario ($)" styleClass="form-label"/>
+                <TextField fx:id="txtESalario" promptText="0.00" styleClass="text-field"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Region HBox.hgrow="ALWAYS"/>
+        </HBox>
+
+        <!-- Sedes con permiso -->
+        <VBox spacing="8"
+              style="-fx-background-color:#f8fafc; -fx-background-radius:8;
+                     -fx-border-color:#e2e8f0; -fx-border-radius:8; -fx-padding:12;">
+            <Label text="Sedes con acceso"
+                   style="-fx-font-size:12px; -fx-font-weight:bold; -fx-text-fill:#2563eb;"/>
+            <Label text="Selecciona al menos una sede"
+                   style="-fx-font-size:11px; -fx-text-fill:#64748b;"/>
+            <VBox fx:id="panelSedesCheck" spacing="6"/>
+        </VBox>
+
+        <HBox spacing="12" alignment="CENTER_RIGHT">
+            <Button text="Cancelar" styleClass="btn-secondary" onAction="#cancelarFormEmpleado"/>
+            <Button text="Guardar Empleado" styleClass="btn-primary" onAction="#guardarEmpleado"/>
+        </HBox>
+        <Label fx:id="lblErrorEmpleado" text="" style="-fx-text-fill:#ef4444;" visible="false" managed="false"/>
+    </VBox>
+
+    <!-- ===== FORM ESPACIO ===== -->
+    <VBox fx:id="panelFormEspacio" styleClass="card" spacing="14" visible="false" managed="false">
+        <Label text="Nuevo Espacio" style="-fx-font-size:15px;-fx-font-weight:bold;"/>
+        <HBox spacing="14">
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Código *" styleClass="form-label"/>
+                <TextField fx:id="txtEspacioCodigo" promptText="Ej. A-01" styleClass="text-field"/>
+            </VBox>
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Tipo" styleClass="form-label"/>
+                <ComboBox fx:id="cmbEspacioTipo" maxWidth="Infinity"/>
+            </VBox>
+        </HBox>
+        <HBox spacing="12" alignment="CENTER_RIGHT">
+            <Button text="Cancelar" styleClass="btn-secondary" onAction="#cancelarFormEspacio"/>
+            <Button text="Guardar Espacio" styleClass="btn-primary" onAction="#guardarEspacio"/>
+        </HBox>
+        <Label fx:id="lblErrorEspacio" text="" style="-fx-text-fill:#ef4444;" visible="false" managed="false"/>
+    </VBox>
+
+    <!-- ===== FORM SEDE ===== -->
+    <VBox fx:id="panelFormSede" styleClass="card" spacing="14" visible="false" managed="false">
+        <Label text="Nueva Sede / Estacionamiento" style="-fx-font-size:15px;-fx-font-weight:bold;"/>
+        <HBox spacing="14">
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Nombre *" styleClass="form-label"/>
+                <TextField fx:id="txtSedeNombre" promptText="Ej. Sucursal Centro" styleClass="text-field"/>
+            </VBox>
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Calle / Dirección *" styleClass="form-label"/>
+                <TextField fx:id="txtSedeCalle" promptText="Ej. Av. Reforma 123" styleClass="text-field"/>
+            </VBox>
+            <HBox spacing="14">
+    <VBox spacing="6" HBox.hgrow="ALWAYS">
+        <Label text="Número Exterior *" styleClass="form-label"/>
+        <TextField fx:id="txtNumeroExterior"
+                   promptText="Ej. 123"
+                   styleClass="text-field"/>
+    </VBox>
+
+    <VBox spacing="6" HBox.hgrow="ALWAYS">
+        <Label text="Código Postal *" styleClass="form-label"/>
+        <TextField fx:id="txtCodigoPostal"
+                   promptText="Ej. 94300"
+                   styleClass="text-field"/>
+    </VBox>
+</HBox>
+        </HBox>
+        <HBox spacing="14">
+            <VBox spacing="6" HBox.hgrow="ALWAYS">
+                <Label text="Ciudad" styleClass="form-label"/>
+                <ComboBox fx:id="cmbSedeCiudad" maxWidth="Infinity" promptText="Selecciona ciudad"/>
+            </VBox>
+        </HBox>
+        <HBox spacing="12" alignment="CENTER_RIGHT">
+            <Button text="Cancelar" styleClass="btn-secondary" onAction="#cancelarFormSede"/>
+            <Button text="Guardar Sede" styleClass="btn-primary" onAction="#guardarSede"/>
+        </HBox>
+        <Label fx:id="lblErrorSede" text="" style="-fx-text-fill:#ef4444;" visible="false" managed="false"/>
+    </VBox>
+
+</VBox>

@@ -15,19 +15,20 @@ import java.util.List;
  * @author saori
  */
 public class EspacioService {
-    private EspacioDAO espacioDao;
-    
-    
+    private static final java.util.logging.Logger logger =
+            java.util.logging.Logger.getLogger(EspacioService.class.getName());
+
+    private EspacioDAO espacioDao = new EspacioDAO();
 
     public Espacio crearCajon(Estacionamiento estacionamiento, int idTipo, int idEstado, String codigo) {
-        
+
         TipoEspacio tipo = new TipoEspacio();
         tipo.setIdTipoEspacio(idTipo);
         tipo.setDescripcion(MisConstantes.getNombreTipoEspacio(idTipo));
-        
+
         EstadoEspacio estado = new EstadoEspacio();
         estado.setIdEstadoEspacio(idEstado);
-        tipo.setDescripcion(MisConstantes.getNombreEstadoEspacio(idTipo));
+        estado.setDescripcion(MisConstantes.getNombreEstadoEspacio(idEstado));
 
         Espacio esp = new Espacio();
         esp.setEstacionamiento(estacionamiento);
@@ -88,12 +89,12 @@ public class EspacioService {
       
         return false;
     }
-    public boolean ocuparCajon(int idEspacio, Cliente cliente) {
+    public boolean ocuparCajon(int idEspacio, Cliente cliente, CodigoAcceso c) {
     Espacio esp = espacioDao.buscarPorId(idEspacio);
 
 
     if (esp != null && (esp.getEstadoEspacio().getIdEstadoEspacio() == MisConstantes.ESPACIO_DISPONIBLE || esp.getEstadoEspacio().getIdEstadoEspacio() == MisConstantes.ESPACIO_PENSION)) {
-        if(cliente != null){
+        if(cliente != null || c != null){
             return espacioDao.actualizarEstado(idEspacio, MisConstantes.ESPACIO_PENSION);
         }else {
         return espacioDao.actualizarEstado(idEspacio, MisConstantes.ESPACIO_OCUPADO);

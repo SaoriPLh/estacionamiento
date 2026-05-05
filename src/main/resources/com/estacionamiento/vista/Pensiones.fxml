@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.estacionamiento.controlador.PensionesController"
+      styleClass="view-container" stylesheets="@styles/app.css"
+      spacing="16">
+    <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
+
+    <HBox alignment="CENTER_LEFT" spacing="12">
+        <Label text="Gestión de Pensiones" styleClass="view-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <ComboBox fx:id="cmbFiltroEstado" prefWidth="150"/>
+        <Button text="Recargar" onAction="#recargar" styleClass="btn-secondary"/>
+    </HBox>
+
+    <Label fx:id="lblAvisoPorVencer"
+           style="-fx-background-color:#fef3c7;-fx-border-color:#f59e0b;-fx-border-radius:6;
+                  -fx-background-radius:6;-fx-padding:8 14;-fx-text-fill:#92400e;-fx-font-size:13px;"
+           visible="false" managed="false" wrapText="true"/>
+
+    <TableView fx:id="tablaPensiones" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colCliente"     text="Cliente"  prefWidth="170"/>
+            <TableColumn fx:id="colPlaca"       text="Placa"    prefWidth="100"/>
+            <TableColumn fx:id="colEspacio"     text="Espacio"  prefWidth="80"/>
+            <TableColumn fx:id="colTarifa"      text="Tarifa"   prefWidth="90"/>
+            <TableColumn fx:id="colFechaInicio" text="Inicio"   prefWidth="120"/>
+            <TableColumn fx:id="colFechaFin"    text="Vence"    prefWidth="120"/>
+            <TableColumn fx:id="colEstado"      text="Estado"   prefWidth="100"/>
+            <TableColumn fx:id="colAcciones"    text="Acciones" prefWidth="300"/>
+        </columns>
+        <placeholder><Label text="No hay pensiones registradas."/></placeholder>
+    </TableView>
+
+    <Label fx:id="lblError" style="-fx-text-fill:#ef4444; -fx-font-size:13px;"
+           visible="false" managed="false" wrapText="true"/>
+</VBox>

@@ -25,7 +25,15 @@ public class TarifaService {
         }
         return false;
     }
-    
+    public Tarifa obtenerTarifaNormalPorSede(int idSede) {
+        Tarifa t = tarifaDao.obtenerTarifaNormalPorSede(idSede);
+        if (t == null) {
+            // Log de error o lanzar una excepción personalizada
+            System.out.println("Error: No se encontró tarifa normal para la sede " + idSede);
+            // Podrías retornar una tarifa por defecto para que el sistema no truene
+        }
+        return t;
+    }
     public boolean actualizarTarifa(Tarifa tarifa) {
     if (tarifa == null || tarifa.getIdTarifa() <= 0) return false;
 

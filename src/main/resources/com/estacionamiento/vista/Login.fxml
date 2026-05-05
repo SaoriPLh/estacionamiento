@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.estacionamiento.controlador.LoginController"
+           styleClass="login-bg"
+           stylesheets="@styles/app.css">
+
+    <VBox alignment="CENTER" spacing="0" maxWidth="420">
+
+        <!-- Logo -->
+        <VBox alignment="CENTER" spacing="8">
+            <StackPane styleClass="login-icon-box" alignment="CENTER" maxWidth="56" maxHeight="56">
+                <Label text="P" style="-fx-text-fill:white;-fx-font-size:26px;-fx-font-weight:bold;"/>
+            </StackPane>
+            <Label text="Sistema de Estacionamiento" styleClass="login-title"/>
+            <Label text="Gestión de Estacionamientos" styleClass="login-subtitle"/>
+        </VBox>
+
+        <VBox.margin><Insets top="24"/></VBox.margin>
+
+        <!-- Card -->
+        <VBox styleClass="login-card" spacing="20">
+
+            <!-- Usuario -->
+            <VBox spacing="6">
+                <Label text="Usuario" styleClass="form-label"/>
+                <TextField fx:id="txtUsuario" promptText="Ingresa tu usuario"
+                           styleClass="text-field" onKeyPressed="#onKeyPressed"/>
+            </VBox>
+
+            <!-- Contraseña -->
+            <VBox spacing="6">
+                <Label text="Contraseña" styleClass="form-label"/>
+                <PasswordField fx:id="txtPassword" promptText="••••••••"
+                               styleClass="password-field" onKeyPressed="#onKeyPressed"/>
+            </VBox>
+
+            <!-- Error -->
+            <Label fx:id="lblError" text="" style="-fx-text-fill:#ef4444;-fx-font-size:13px;" wrapText="true" visible="false" managed="false"/>
+
+            <!-- Botón login -->
+            <Button text="→  Iniciar Sesión" styleClass="btn-primary"
+                    onAction="#onLogin" maxWidth="Infinity" prefHeight="42"/>
+
+
+        </VBox>
+
+    </VBox>
+</StackPane>

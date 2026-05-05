@@ -7,8 +7,10 @@ package com.estacionamiento.util;
 import com.estacionamiento.modelo.*;
 
 public class SessionManager {
-    
-    
+
+    /** Cambia a false para conectar con MySQL real */
+    public static final boolean MODO_DEMO = false;
+
     private static SessionManager instance;
     
     

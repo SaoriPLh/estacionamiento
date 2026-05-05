@@ -2,26 +2,22 @@ package com.estacionamiento.dao;
 
 import com.estacionamiento.modelo.Cliente;
 import com.estacionamiento.modelo.Tarifa;
-
 import com.estacionamiento.util.DBConnection;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class ClienteDAO {
 
-   
     public Cliente insertar(Cliente cliente, Connection con) throws SQLException {
         String sql = "INSERT INTO cliente " +
                      "(id_tarifa, nombre, apellido_paterno, apellido_materno, " +
-                     " correo, telefono, tipo_cliente) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
+                     " correo, telefono) " +
+                     "VALUES (?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-          
             if (cliente.getTarifa() != null) {
                 ps.setInt(1, cliente.getTarifa().getIdTarifa());
             } else {
@@ -33,7 +29,6 @@ public class ClienteDAO {
             ps.setString(4, cliente.getApellidoMaterno());
             ps.setString(5, cliente.getCorreo());
             ps.setString(6, cliente.getTelefono());
-            ps.setString(7, cliente.getTipoCliente());
 
             int filas = ps.executeUpdate();
             if (filas > 0) {
@@ -47,7 +42,6 @@ public class ClienteDAO {
         return cliente;
     }
 
-    
     public Cliente buscarPorId(int idCliente) throws SQLException {
         String sql = "SELECT c.*, t.precio " +
                      "FROM cliente c " +
@@ -68,7 +62,6 @@ public class ClienteDAO {
         return null;
     }
 
-    
     public List<Cliente> listarTodos() throws SQLException {
         List<Cliente> lista = new ArrayList<>();
         String sql = "SELECT c.*, t.precio " +
@@ -86,11 +79,10 @@ public class ClienteDAO {
         return lista;
     }
 
-   
     public boolean actualizar(Cliente cliente) throws SQLException {
         String sql = "UPDATE cliente SET " +
                      "id_tarifa = ?, nombre = ?, apellido_paterno = ?, " +
-                     "apellido_materno = ?, correo = ?, telefono = ?, tipo_cliente = ? " +
+                     "apellido_materno = ?, correo = ?, telefono = ? " +
                      "WHERE id_cliente = ?";
 
         try (Connection con = DBConnection.getConnection();
@@ -107,14 +99,38 @@ public class ClienteDAO {
             ps.setString(4, cliente.getApellidoMaterno());
             ps.setString(5, cliente.getCorreo());
             ps.setString(6, cliente.getTelefono());
-            ps.setString(7, cliente.getTipoCliente());
-            ps.setInt(8, cliente.getIdCliente());
+            ps.setInt(7, cliente.getIdCliente());
 
             return ps.executeUpdate() > 0;
         }
     }
 
-   
+    public List<Cliente> listarClientesPensionadosPorEstacionamiento(int idEstacionamiento) throws SQLException {
+    List<Cliente> lista = new ArrayList<>();
+
+    String sql = "SELECT DISTINCT c.*, t.precio " +
+                 "FROM cliente c " +
+                 "JOIN pension p ON p.id_cliente = c.id_cliente " +
+                 "JOIN espacio e ON p.id_espacio = e.id_espacio " +
+                 "LEFT JOIN tarifa t ON c.id_tarifa = t.id_tarifa " +
+                 "WHERE p.id_estado_pension = 1 " +
+                 "AND e.id_estacionamiento = ?";
+
+    try (Connection con = DBConnection.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setInt(1, idEstacionamiento);
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                lista.add(mapearCliente(rs));
+            }
+        }
+    }
+
+    return lista;
+}
+
     public boolean eliminar(int idCliente) throws SQLException {
         String sql = "DELETE FROM cliente WHERE id_cliente = ?";
 
@@ -126,7 +142,6 @@ public class ClienteDAO {
         }
     }
 
-  
     private Cliente mapearCliente(ResultSet rs) throws SQLException {
         Cliente c = new Cliente();
         c.setIdCliente(rs.getInt("id_cliente"));
@@ -135,9 +150,7 @@ public class ClienteDAO {
         c.setApellidoMaterno(rs.getString("apellido_materno"));
         c.setCorreo(rs.getString("correo"));
         c.setTelefono(rs.getString("telefono"));
-        c.setTipoCliente(rs.getString("tipo_cliente"));
 
-       
         int idTarifa = rs.getInt("id_tarifa");
         if (!rs.wasNull()) {
             Tarifa t = new Tarifa();
@@ -145,6 +158,7 @@ public class ClienteDAO {
             t.setPrecio(rs.getDouble("precio"));
             c.setTarifa(t);
         }
+
         return c;
     }
 }

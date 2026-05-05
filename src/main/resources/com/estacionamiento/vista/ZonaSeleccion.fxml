@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/21"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.estacionamiento.controlador.ZonaSeleccionController"
+           styleClass="zona-bg"
+           stylesheets="@styles/app.css">
+
+    <VBox alignment="CENTER" spacing="48" maxWidth="1000">
+
+        <!-- Encabezado -->
+        <VBox alignment="CENTER" spacing="8">
+            <Label fx:id="lblBienvenido" text="Bienvenido, Admin" styleClass="bienvenido-title"/>
+            <Label text="¿A qué zona deseas acceder?" styleClass="bienvenido-sub"/>
+        </VBox>
+
+        <!-- Cards de zonas -->
+        <HBox fx:id="hboxZonas" alignment="CENTER" spacing="24"/>
+
+        <!-- Nota -->
+        <Label text="Como administrador, tienes acceso a todas las zonas"
+               style="-fx-text-fill:#64748b;-fx-font-size:13px;"/>
+
+    </VBox>
+</StackPane>

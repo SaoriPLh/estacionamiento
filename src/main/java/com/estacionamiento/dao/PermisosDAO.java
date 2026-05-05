@@ -15,7 +15,7 @@ public class PermisosDAO {
         String sql = "SELECT p.id_permiso, p.fecha_asignacion, " +
                      "e.id_estacionamiento, e.nombre AS nombre_estac, " +
                      "ep.id_estado_permiso, ep.nombre_estado " +
-                     "FROM permiso p " +
+                     "FROM permisos p " +
                      "JOIN estacionamiento e ON p.id_estacionamiento = e.id_estacionamiento " +
                      "JOIN estado_permiso ep ON p.id_estado_permiso = ep.id_estado_permiso " +
                      "WHERE p.id_persona = ?";
@@ -52,8 +52,31 @@ public class PermisosDAO {
         }
         return lista;
     }
+public boolean existePermiso(int idPersona, int idEstacionamiento) {
+
+    if (idPersona <= 0 || idEstacionamiento <= 0) {
+        return false;
+    }
+
+    String sql = "SELECT 1 FROM permisos WHERE id_persona = ? AND id_estacionamiento = ? LIMIT 1";
+
+    try (Connection con = DBConnection.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setInt(1, idPersona);
+        ps.setInt(2, idEstacionamiento);
+
+        try (ResultSet rs = ps.executeQuery()) {
+            return rs.next();
+        }
+
+    } catch (SQLException e) {
+        System.err.println("Error al verificar permiso: " + e.getMessage());
+        return false;
+    }
+}
 public int asignarPermisos(int idPersona, int idEstacionamiento) {
-    String sql = "INSERT INTO permiso (id_persona, id_estacionamiento, id_estado_permiso, fecha_asignacion) VALUES (?, ?, ?, CURRENT_TIMESTAMP)";
+    String sql = "INSERT INTO permisos (id_persona, id_estacionamiento, id_estado_permiso, fecha_asignacion) VALUES (?, ?, ?, CURRENT_TIMESTAMP)";
     
     try (Connection con = DBConnection.getConnection();
          PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -76,7 +99,7 @@ public int asignarPermisos(int idPersona, int idEstacionamiento) {
 
 public boolean revocarTodosLosPermisos(int idPersona) {
     
-    String sql = "UPDATE permiso SET id_estado_permiso = ? WHERE id_persona = ?";
+    String sql = "UPDATE permisos SET id_estado_permiso = ? WHERE id_persona = ?";
     
     try (Connection con = DBConnection.getConnection();
          PreparedStatement ps = con.prepareStatement(sql)) {
@@ -95,37 +118,43 @@ public boolean revocarTodosLosPermisos(int idPersona) {
 
 public List<Persona> listarPersonalPorEstacionamiento(int idEstacionamiento) {
     List<Persona> lista = new ArrayList<>();
-    String sql = "SELECT p.*, r.nombre_rol " +
-                 "FROM permiso per " +
+    String sql = "SELECT DISTINCT p.id_persona, p.nombre, p.apellido_paterno, p.username, " +
+                 "p.requiere_cambio, p.salario, p.id_rol, r.nombre_rol " +
+                 "FROM permisos per " +
                  "JOIN persona p ON per.id_persona = p.id_persona " +
                  "JOIN rol r ON p.id_rol = r.id_rol " +
                  "WHERE per.id_estacionamiento = ? AND per.id_estado_permiso = 1";
 
     try (Connection con = DBConnection.getConnection();
          PreparedStatement ps = con.prepareStatement(sql)) {
-        
+
         ps.setInt(1, idEstacionamiento);
-        ResultSet rs = ps.executeQuery();
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Rol rol = new Rol();
+                rol.setIdRol(rs.getInt("id_rol"));
+                rol.setNombreRol(rs.getString("nombre_rol"));
 
-        while (rs.next()) {
-           
-            Rol rol = new Rol();
-            rol.setIdRol(rs.getInt("id_rol"));
-            rol.setNombreRol(rs.getString("nombre_rol"));
+                Persona p = new Persona();
+                p.setIdPersona(rs.getInt("id_persona"));
+                p.setNombre(rs.getString("nombre"));
+                p.setApellidoPaterno(rs.getString("apellido_paterno"));
+                p.setUsername(rs.getString("username"));
+                p.setRol(rol);
+                p.setRequiereCambio(rs.getInt("requiere_cambio") == 1);
+                Object salarioObj = rs.getObject("salario");
+                p.setSalario(salarioObj != null ? rs.getDouble("salario") : null);
 
-           
-            Persona p = new Persona();
-            p.setIdPersona(rs.getInt("id_persona"));
-            p.setNombre(rs.getString("nombre"));
-            p.setApellidoPaterno(rs.getString("apellido_paterno"));
-            p.setUsername(rs.getString("username"));
-            p.setRol(rol);
-            p.setRequiereCambio(rs.getInt("requiere_cambio") == 1);
-
-            lista.add(p);
+                lista.add(p);
+            }
         }
     } catch (SQLException e) {
         e.printStackTrace();
+    }
+
+    // Load permisos for each person (needed for "Activo/Sin permisos" display)
+    for (Persona p : lista) {
+        p.setPermisos(obtenerPermisosPorPersona(p.getIdPersona()));
     }
     return lista;
 }
