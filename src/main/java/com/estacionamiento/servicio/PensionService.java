@@ -22,9 +22,8 @@ public class PensionService {
     private final EspacioDAO espacioDAO = new EspacioDAO();
     private final RegistroDAO registroDAO = new RegistroDAO();
 
-    // =========================================================================
-    // CREAR
-    // =========================================================================
+    
+    
 
     public Pension crearPension(Cliente cliente, Vehiculo vehiculo, Tarifa tarifa,
                                 Espacio espacio, CodigoAcceso codigo, Date fechaFin) {
@@ -100,14 +99,9 @@ public class PensionService {
         }
     }
 
-    // =========================================================================
+   
     // RENOVAR
-    // =========================================================================
-
-    /**
-     * Cierra el registro activo del periodo anterior, extiende la fecha_fin
-     * de la pensión y crea un nuevo registro para el periodo renovado.
-     */
+  
     public boolean renovarPension(int idPension, Date nuevaFechaFin) {
         Pension p = pensionDAO.buscarPorId(idPension);
         if (p == null) throw new IllegalArgumentException("Pensión no encontrada: " + idPension);
@@ -120,14 +114,14 @@ public class PensionService {
             con = DBConnection.getConnection();
             con.setAutoCommit(false);
 
-            // 1. Cerrar el registro activo del periodo anterior con hora_salida = ahora
+            //  Cerrar el registro activo del periodo anterior con hora_salida = ahora
             Timestamp ahora = new Timestamp(System.currentTimeMillis());
             registroDAO.cerrarRegistroActivoPorEspacio(p.getEspacio().getIdEspacio(), ahora, con);
 
-            // 2. Actualizar fecha_fin de la pension
+            //  Actualizar fecha_fin de la pension
             pensionDAO.actualizarFechaFin(idPension, nuevaFechaFin, con);
 
-            // 3. Crear nuevo registro para el periodo renovado
+            //  Crear nuevo registro para el periodo renovado
             Registro nuevo = construirRegistroRenovacion(p, nuevaFechaFin);
             registroDAO.insertar(nuevo, con);
 
@@ -251,10 +245,8 @@ public class PensionService {
         }
     }
 
-    // =========================================================================
     // CONSULTAS
-    // =========================================================================
-
+    
     public void enviarAvisosProximos(int diasAnticipacion) {
         List<Pension> proximas = pensionDAO.listarProximasAVencer(diasAnticipacion);
         for (Pension p : proximas) {

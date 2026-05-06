@@ -130,7 +130,29 @@ public class ClienteDAO {
 
     return lista;
 }
+public List<Cliente> listarPorEstacionamiento(int idEstacionamiento) throws SQLException {
+    List<Cliente> lista = new ArrayList<>();
 
+    String sql =
+        "SELECT DISTINCT c.*, t.precio " +
+        "FROM cliente c " +
+        "LEFT JOIN tarifa t ON c.id_tarifa = t.id_tarifa " +
+        "WHERE c.id_estacionamiento = ?";
+
+    try (Connection con = DBConnection.getConnection();
+         PreparedStatement ps = con.prepareStatement(sql)) {
+
+        ps.setInt(1, idEstacionamiento);
+
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                lista.add(mapearCliente(rs));
+            }
+        }
+    }
+
+    return lista;
+}
     public boolean eliminar(int idCliente) throws SQLException {
         String sql = "DELETE FROM cliente WHERE id_cliente = ?";
 

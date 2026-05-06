@@ -69,33 +69,19 @@ public class RegistroServicio {
               nuevo.setFecha_fin_plan(ahora.plusHours(cantidad));
           }// Dentro de registrarEntrada
 else if (registro.getTarifa().getTipoTarifa().getIdTipoTarifa() == MisConstantes.TARIFA_CONVENIO) {
-    Tarifa tarifaPrecioHora = tarifaService.obtenerTarifaNormalPorSede(idSede);
-    if (tarifaPrecioHora == null) {
-        espacioService.liberarCajon(registro.getEspacio().getIdEspacio());
-        return null;
-    }
-    double precioHora = tarifaPrecioHora.getPrecio();
-
-    // 2. Obtener la tarifa de convenio completa para tener el descuento y la unidad
     Tarifa tarifaConvenio = tarifaService.buscarPorid(registro.getTarifa().getIdTarifa());
     UnidadDescuento unidad = unidadDescuentoDAO.obtenerPorId(tarifaConvenio.getUnidadDescuento().getIdUnidadDescuento());
 
-    // 3. Convertir la cantidad (días/horas) a horas totales usando el factor
-    // Usamos double para no perder precisión en el cálculo
-    double horasTotales = (double) (unidad.getFactorConversionMinutos() * cantidad) / 60.0;
-    
-    
-    
-    // 5. Aplicar el descuento
-    // Suponiendo que 'cantidad_descuento' es el número de horas que NO se cobran:
-    double horasACobrar = horasTotales - tarifaConvenio.getCantidad_descuento();
-    if (horasACobrar < 0) horasACobrar = 0; // Por si el descuento es mayor al tiempo
-    
-    double montoFinal = horasACobrar * precioHora;
-    
+    // Everything in minutes internally
+    double minutosTotales    = (double) unidad.getFactorConversionMinutos() * cantidad;
+    double minutosDescuento  = (double) unidad.getFactorConversionMinutos() * tarifaConvenio.getCantidad_descuento();
+    double minutosACobrar    = Math.max(0, minutosTotales - minutosDescuento);
+
+    // Price is per UNIT (per day/hour/minute) — divide by factor to get back to units
+    double montoFinal = (minutosACobrar / unidad.getFactorConversionMinutos()) * tarifaConvenio.getPrecio();
+
     nuevo.setMonto(montoFinal);
-    // Seteamos la fecha fin basada en las horas del convenio
-    nuevo.setFecha_fin_plan(ahora.plusMinutes((long)horasTotales * 60));
+    nuevo.setFecha_fin_plan(ahora.plusMinutes((long) minutosTotales));
 }
           else if (registro.getTarifa().getTipoTarifa().getIdTipoTarifa() == MisConstantes.TARIFA_PENSION) {
            
@@ -115,15 +101,20 @@ else if (registro.getTarifa().getTipoTarifa().getIdTipoTarifa() == MisConstantes
 
             }
 
+            if (registro.getTarifa().getTipoCobro() != null
+        && registro.getTarifa().getTipoCobro().getIdTipoCobro() == MisConstantes.TIPO_COBRO_MENSUAL) {
+
+    nuevo.setFecha_fin_plan(ahora.plusMonths(1));
+
+} else {
+    // por tiempo (hora/día/minuto) NO debe fijarse fecha rígida
+    nuevo.setFecha_fin_plan(null);
+}
+
           
           
            
-            if (registro.getTarifa().getTipoCobro() != null
-                    && registro.getTarifa().getTipoCobro().getIdTipoCobro() == MisConstantes.TIPO_COBRO_MENSUAL) {
-                nuevo.setFecha_fin_plan(ahora.plusMonths(1));
-            } else {
-                nuevo.setFecha_fin_plan(ahora.plusDays(15));
-            }
+          
           }
           
           else {
@@ -196,7 +187,7 @@ nuevo.setEstadoRegistro(estado);
                             String placa  = insertado.getVehiculo().getPlaca();
                             String ini    = insertado.getHoraEntrada() != null ? insertado.getHoraEntrada().toLocalDate().toString() : "";
                             String fin    = insertado.getFecha_fin_plan() != null ? insertado.getFecha_fin_plan().toLocalDate().toString() : "—";
-                            EmailService.notificarNuevaPension(correo, nombre, placa, ini, fin, insertado.getMonto());
+                            EmailService.notificarNuevaPension(correo, nombre, placa, ini, fin, insertado.getMonto(),registro.getTarifa().getValorDescuento() != null ? registro.getTarifa().getValorDescuento(): 0.0 );
                         }
                     } catch (Exception e) {
                         System.err.println("[RegistroServicio] No se pudo enviar email de confirmacion: " + e.getMessage());
@@ -267,9 +258,7 @@ public List<Registro> obtenerRegistrosFiltrados(LocalDateTime inicio, LocalDateT
             case MisConstantes.TARIFA_NORMAL:
                 reporte.numeroTarifaNormal++;
                 break;
-            case MisConstantes.TARIFA_ESPECIAL:
-                reporte.numeroTarifaEspecial++;
-                break;
+           
             case MisConstantes.TARIFA_CONVENIO:
                 reporte.numeroTarifaConvenios++;
                 break;

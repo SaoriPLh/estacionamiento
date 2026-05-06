@@ -16,7 +16,7 @@ public class MockData {
 
     private static final Random RNG = new Random(42); // seed fija = resultados reproducibles
 
-    // ===== SESIÓN =====
+    //  SESIÓN 
 
     /** Inyecta una sesión de Admin demo en SessionManager */
     public static void inyectarSesionDemo() {
@@ -46,7 +46,7 @@ public class MockData {
         System.out.println("[DEMO] Sesión inyectada: admin@CyberPark → Sede: " + sede.getNombre());
     }
 
-    // ===== SEDE =====
+    //  SEDE 
 
     public static Estacionamiento getSede() {
         Estacionamiento sede = new Estacionamiento();
@@ -56,7 +56,7 @@ public class MockData {
         return sede;
     }
 
-    // ===== ESPACIOS (30 cajones con estados aleatorios) =====
+    //  ESPACIOS (30 cajones con estados aleatorios) 
 
     public static List<Espacio> getEspacios() {
         List<Espacio> lista = new ArrayList<>();
@@ -91,7 +91,7 @@ public class MockData {
         return lista;
     }
 
-    // ===== REGISTROS ACTIVOS (para búsqueda de salida) =====
+    //  REGISTROS ACTIVOS (para búsqueda de salida) 
 
     public static List<Registro> getRegistrosActivos() {
         List<Registro> lista = new ArrayList<>();
@@ -129,7 +129,7 @@ public class MockData {
         return lista;
     }
 
-    // ===== HISTORIAL (15 registros mixtos activos + finalizados) =====
+    //  HISTORIAL (15 registros mixtos activos + finalizados) 
 
     public static List<Registro> getHistorial() {
         List<Registro> lista = new ArrayList<>();
@@ -171,14 +171,13 @@ public class MockData {
         return lista;
     }
 
-    // ===== TARIFAS =====
+    //  TARIFAS 
 
     public static List<Tarifa> getTarifas() {
         List<Tarifa> lista = new ArrayList<>();
         Object[][] datos = {
             {MisConstantes.TARIFA_NORMAL,   MisConstantes.TIPO_COBRO_HORA,      "Normal",   "Por Hora",   35.0},
             {MisConstantes.TARIFA_PENSION,  MisConstantes.TIPO_COBRO_MENSUAL,   "Pensión",  "Mensual",  1200.0},
-            {MisConstantes.TARIFA_ESPECIAL, MisConstantes.TIPO_COBRO_HORA,      "Especial", "Por Hora",   50.0},
            
         };
         int id = 1;
@@ -202,7 +201,7 @@ public class MockData {
         return lista;
     }
 
-    // ===== MARCAS =====
+    //  MARCAS 
 
     public static List<Marca> getMarcas() {
         String[] nombres = {"Toyota", "Honda", "Nissan", "Chevrolet", "Ford",
@@ -215,7 +214,7 @@ public class MockData {
         return lista;
     }
 
-    // ===== CLIENTES =====
+    //  CLIENTES 
 
     public static List<Cliente> getClientes() {
         String[][] datos = {
@@ -238,7 +237,7 @@ public class MockData {
         return lista;
     }
 
-    // ===== PERSONAL =====
+    //  PERSONAL 
 
     public static List<Persona> getPersonal() {
         Empresa empresa = new Empresa();
@@ -271,7 +270,7 @@ public class MockData {
         return lista;
     }
 
-    // ===== RESUMEN GANANCIAS =====
+    //  RESUMEN GANANCIAS 
 
     public static ResumenGananciasDTO getResumenGanancias() {
         ResumenGananciasDTO r = new ResumenGananciasDTO();
@@ -284,7 +283,7 @@ public class MockData {
         return r;
     }
 
-    // ===== REGISTRO DE SALIDA ENCONTRADO (para buscar por placa en demo) =====
+    //  REGISTRO DE SALIDA ENCONTRADO (para buscar por placa en demo) 
 
     public static Registro getRegistroActivoParaSalida(String termino) {
         for (Registro r : getRegistrosActivos()) {

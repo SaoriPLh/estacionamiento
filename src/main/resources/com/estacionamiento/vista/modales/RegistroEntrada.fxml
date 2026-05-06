@@ -70,17 +70,16 @@
                          -fx-padding:16;">
                 <Label text="Espacio y Tarifa"
                        style="-fx-font-size:12px; -fx-font-weight:bold; -fx-text-fill:#2563eb;"/>
-                <HBox spacing="14">
-                    <VBox spacing="5" HBox.hgrow="ALWAYS">
-                        <Label text="Espacio *"/>
-                        <ComboBox fx:id="cmbEspacio" maxWidth="Infinity"/>
-                    </VBox>
-                    <VBox spacing="5" HBox.hgrow="ALWAYS">
-                        <Label text="Tarifa *"/>
-                        <ComboBox fx:id="cmbTarifa" maxWidth="Infinity"/>
-                    </VBox>
-                </HBox>
-                <Spinner fx:id="spnHoras" min="1" max="24" initialValue="1"/>
+                <VBox spacing="5">
+                    <Label text="Espacio *"/>
+                    <ComboBox fx:id="cmbEspacio" maxWidth="Infinity"/>
+                </VBox>
+                <VBox spacing="5">
+                    <Label text="Tarifa *"/>
+                    <ComboBox fx:id="cmbTarifa" maxWidth="Infinity"/>
+                </VBox>
+                <Label fx:id="lblCantidad" text="Horas del plan:" style="-fx-font-size:12px; -fx-text-fill:#374151;"/>
+                <Spinner fx:id="spnHoras" min="1" max="365" initialValue="1" maxWidth="140"/>
             </VBox>
 
             <!-- Código acceso -->

@@ -12,7 +12,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>17</maven.compiler.release>
         <javafx.version>21.0.2</javafx.version>
-        <!-- Clase de arranque para NetBeans y exec plugin -->
         <exec.mainClass>com.estacionamiento.Launcher</exec.mainClass>
     </properties>
 
@@ -57,8 +56,6 @@
 
     <build>
         <plugins>
-
-            <!-- Compilador Java 17 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -68,7 +65,6 @@
                 </configuration>
             </plugin>
 
-            <!-- mvn javafx:run  (opción recomendada) -->
             <plugin>
                 <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
@@ -78,17 +74,45 @@
                 </configuration>
             </plugin>
 
-            <!-- mvn exec:java  (lo que usa NetBeans al presionar Run) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                            <outputFile>${project.build.directory}/Estacionamiento-fat.jar</outputFile>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.estacionamiento.Launcher</mainClass>
+                                </transformer>
+                            </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
                     <mainClass>com.estacionamiento.Launcher</mainClass>
-                    <!--
-                        Añade los módulos JavaFX al module-path automáticamente.
-                        Esto resuelve "JavaFX runtime components are missing".
-                    -->
                     <commandlineArgs>
                         --module-path "${project.build.directory}/dependency"
                         --add-modules javafx.controls,javafx.fxml,javafx.graphics
@@ -96,7 +120,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Copia dependencias para que exec plugin pueda armar el module-path -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -105,7 +128,9 @@
                     <execution>
                         <id>copy-dependencies</id>
                         <phase>prepare-package</phase>
-                        <goals><goal>copy-dependencies</goal></goals>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
                         <configuration>
                             <outputDirectory>${project.build.directory}/dependency</outputDirectory>
                             <overWriteReleases>false</overWriteReleases>
@@ -116,7 +141,6 @@
                 </executions>
             </plugin>
 
-            <!-- JAR ejecutable (para distribuir con java -jar) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>

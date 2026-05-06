@@ -2,6 +2,7 @@ package com.estacionamiento.servicio;
 
 import com.estacionamiento.modelo.Registro;
 import com.estacionamiento.modelo.Tarifa;
+import com.estacionamiento.util.MisConstantes;
 import java.time.*;
 
 public class CalculoServicio {
@@ -19,7 +20,20 @@ public class CalculoServicio {
             // Una sola tolerancia de 5 minutos al final del plan
             if (ahora.isAfter(finPlan.plusMinutes(5))) {
                 long minutosExcedidos = Duration.between(finPlan, ahora).toMinutes();
-                double precioUnitario = registro.getTarifa() != null ? registro.getTarifa().getPrecio() : 0.0;
+                // Convert tariff price to per-hour for 30-min block penalty
+                double precioUnitario = 0.0;
+                if (registro.getTarifa() != null) {
+                    double precio = registro.getTarifa().getPrecio();
+                    if (registro.getTarifa().getTipoTarifa() != null
+                            && registro.getTarifa().getTipoTarifa().getIdTipoTarifa() == MisConstantes.TARIFA_CONVENIO
+                            && registro.getTarifa().getUnidadDescuento() != null
+                            && registro.getTarifa().getUnidadDescuento().getFactorConversionMinutos() > 0) {
+                        int factor = registro.getTarifa().getUnidadDescuento().getFactorConversionMinutos();
+                        precioUnitario = precio * 60.0 / factor;
+                    } else {
+                        precioUnitario = precio;
+                    }
+                }
 
                 long bloques = minutosExcedidos / 30;
                 long resto   = minutosExcedidos % 30;
@@ -43,9 +57,10 @@ public class CalculoServicio {
 
         double total = montoBase + recargoExceso;
 
-        // Descuento porcentual si existe en la tarifa (aplica principalmente a pensiones)
+        // Descuento porcentual solo para pensiones — convenio ya descontó tiempo en el registro de entrada
         Tarifa tarifa = registro.getTarifa();
-        if (tarifa != null) {
+        if (tarifa != null && (tarifa.getTipoTarifa() == null
+                || tarifa.getTipoTarifa().getIdTipoTarifa() != MisConstantes.TARIFA_CONVENIO)) {
             Double valorDesc = tarifa.getValorDescuento();
             if (valorDesc != null && valorDesc > 0.0) {
                 total -= total * valorDesc;

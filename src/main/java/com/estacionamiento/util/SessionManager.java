@@ -8,7 +8,7 @@ import com.estacionamiento.modelo.*;
 
 public class SessionManager {
 
-    /** Cambia a false para conectar con MySQL real */
+    /** Cambia a false pasa con con la bd**/
     public static final boolean MODO_DEMO = false;
 
     private static SessionManager instance;

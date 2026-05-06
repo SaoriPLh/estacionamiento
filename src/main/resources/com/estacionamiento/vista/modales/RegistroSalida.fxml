@@ -33,19 +33,20 @@
                 <VBox styleClass="card" spacing="10">
                     <HBox spacing="8" alignment="CENTER_LEFT">
                         <Label text="Placa:" styleClass="form-label" minWidth="120"/>
-                        <Label fx:id="lblPlaca" text="—" style="-fx-font-weight:bold;"/>
+                    <Label fx:id="lblPlaca" text="—" style="-fx-text-fill:#000000;"/>
                     </HBox>
                     <HBox spacing="8" alignment="CENTER_LEFT">
                         <Label text="Modelo:" styleClass="form-label" minWidth="120"/>
-                        <Label fx:id="lblModelo" text="—" style="-fx-text-fill:#475569;"/>
+                      <Label fx:id="lblModelo" text="—" style="-fx-text-fill:#000000;"/>
+
                     </HBox>
                     <HBox spacing="8" alignment="CENTER_LEFT">
                         <Label text="Espacio:" styleClass="form-label" minWidth="120"/>
-                        <Label fx:id="lblEspacio" text="—"/>
+                        <Label fx:id="lblEspacio" text="—" style="-fx-text-fill:#000000;"/>
                     </HBox>
                     <HBox spacing="8" alignment="CENTER_LEFT">
                         <Label text="Hora Entrada:" styleClass="form-label" minWidth="120"/>
-                        <Label fx:id="lblEntrada" text="—"/>
+                        <Label fx:id="lblEntrada" text="—" style="-fx-text-fill:#000000;"/>
                     </HBox>
                     <HBox spacing="8" alignment="CENTER_LEFT">
                         <Label text="Vigente hasta:" styleClass="form-label" minWidth="120"/>

@@ -152,7 +152,7 @@ private void initialize() {
     cmbUnidadDescuento.valueProperty().addListener((obs, oldVal, newVal) -> actualizarPrecioEstimado());
 }
 
-    // ===== PERSONAL =====
+    //  PERSONAL 
 
     private void configurarTablaPersonal() {
         colPNombre.setCellValueFactory(d ->
@@ -412,13 +412,13 @@ private void initialize() {
         });
     }
 
-    // ===== IMPRESORAS =====
+    //  IMPRESORAS 
 
     private void cargarImpresoras() {
         if (lblImpresoraTickets == null || lblImpresoraReportes == null) return;
         String t = ConfiguracionLocal.getImpresora("printer.tickets");
         lblImpresoraTickets.setText(t != null && !t.isBlank() ? t : "No configurada");
-        String r = ConfiguracionLocal.getImpresora("printer.reportes");
+        String r = ConfiguracionLocal.getImpresora("reportes");
         lblImpresoraReportes.setText(r != null && !r.isBlank() ? r : "No configurada");
     }
 
@@ -428,7 +428,7 @@ private void initialize() {
     }
 
     @FXML private void eliminarImpresoraReportes() {
-        ConfiguracionLocal.eliminarImpresora("printer.reportes");
+        ConfiguracionLocal.eliminarImpresora("reportes");
         cargarImpresoras();
     }
 
@@ -450,7 +450,7 @@ private void initialize() {
         ocultarErrorEmpleado();
     }
 
-    // ===== TARIFAS =====
+    //  TARIFAS 
 
     private void configurarTablaTarifas() {
         colTTipo.setCellValueFactory(d ->
@@ -608,7 +608,7 @@ private void initialize() {
         tarifaEditando = null;
     }
 
-    // ===== CÓDIGOS DE ACCESO =====
+    //  CÓDIGOS DE ACCESO 
 
   private void configurarTablaCodigos() {
     // 1. Configuración de celdas normales
@@ -706,7 +706,7 @@ private void initialize() {
         });
     }
 
-    // ===== COMBOS =====
+    //  COMBOS 
 
     private void inicializarCombos() {
         TipoTarifa[] tipos = {
@@ -722,11 +722,10 @@ private void initialize() {
             public TipoTarifa fromString(String s) { return null; }
         });
 
-        TipoCobro[] cobros = {
-            crearTipoCobro(MisConstantes.TIPO_COBRO_HORA, "Por Hora"),
-            crearTipoCobro(MisConstantes.TIPO_COBRO_MENSUAL, "Mensual"),
-       
-        };
+       TipoCobro[] cobros = {
+    crearTipoCobro(MisConstantes.TIPO_COBRO_HORA, "Por Tiempo/Hora"),
+    crearTipoCobro(MisConstantes.TIPO_COBRO_MENSUAL, "Mensual"),
+};
         cmbTipoCobro.getItems().addAll(cobros);
         cmbTipoCobro.setConverter(new javafx.util.StringConverter<>() {
             public String toString(TipoCobro t) { return t != null ? t.getNombre() : ""; }
@@ -736,7 +735,7 @@ private void initialize() {
         UnidadDescuento[] unidades = {
             new UnidadDescuento(MisConstantes.UNIDAD_HORA, "Hora", 60),
             new UnidadDescuento(MisConstantes.UNIDAD_DIA, "Día", 1440),
-            new UnidadDescuento(MisConstantes.UNIDAD_MINUTO, "Minuto", 1),
+          
         };
         cmbUnidadDescuento.getItems().addAll(unidades);
         cmbUnidadDescuento.setConverter(new javafx.util.StringConverter<>() {
@@ -770,7 +769,7 @@ private void initialize() {
         TipoCobro t = new TipoCobro(); t.setIdTipoCobro(id); t.setNombre(nombre); return t;
     }
 
-    // ===== ESPACIOS =====
+    //  ESPACIOS 
 
   private void configurarTablaEspacios() {
     colECodigo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getCodigo()));
@@ -890,7 +889,7 @@ private void initialize() {
         });
     }
 
-    // ===== SEDES / ESTACIONAMIENTOS =====
+    //  SEDES / ESTACIONAMIENTOS 
 
 private void configurarTablaSedes() {
     colSNombre.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getNombre()));
@@ -1037,7 +1036,7 @@ private void configurarTablaSedes() {
         });
     }
 
-    // ===== HELPERS =====
+    //  HELPERS 
 
     private void mostrarErrorTarifa(String msg) {
         lblErrorTarifa.setText(msg); lblErrorTarifa.setVisible(true); lblErrorTarifa.setManaged(true);

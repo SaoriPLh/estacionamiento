@@ -29,8 +29,7 @@ public class MisConstantes {
     public static final int TARIFA_NORMAL = 1;
     public static final int TARIFA_PENSION = 2;
 
-    public static final int TARIFA_ESPECIAL = 4;
-    public static final int TARIFA_CONVENIO = 5;
+    public static final int TARIFA_CONVENIO = 3;
 
 
     public static final int UNIDAD_MINUTO = 1; 

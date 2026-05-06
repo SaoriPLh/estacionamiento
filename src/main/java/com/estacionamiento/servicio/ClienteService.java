@@ -48,6 +48,14 @@ public List<Cliente> listarClientesPensionadosPorEstacionamiento(int idEstaciona
         return new ArrayList<>();
     }
 }
+public List<Cliente> listarClientesPorEstacionamiento(int idEstacionamiento) {
+    try {
+        return clienteDAO.listarPorEstacionamiento(idEstacionamiento);
+    } catch (Exception e) {
+        System.err.println("Error en service (listar clientes por sede): " + e.getMessage());
+        return new ArrayList<>();
+    }
+}
   
     public Cliente buscarPorId(int idCliente) {
         try {

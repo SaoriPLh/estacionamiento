@@ -21,7 +21,7 @@ public class CambiarPasswordController {
         String pass = txtNuevaPass.getText();
         String confirm = txtConfirmarPass.getText();
         
-        // Obtenemos el usuario que se guardó en sesión temporalmente durante el login
+        // Obtenemos el usuario que se guardo en sesión temporalmente durante el login
         Persona usuario = SessionManager.getInstance().getUsuario();
 
         if (pass.isEmpty() || pass.length() < 4) {
@@ -35,7 +35,7 @@ public class CambiarPasswordController {
         }
 
         try {
-            // Llamamos a tu servicio[cite: 4]
+            // Llamamos a tu servicio
             boolean exito = loginServicio.cambiarContraseña(usuario.getIdPersona(), pass);
             
             if (exito) {
@@ -52,8 +52,8 @@ public class CambiarPasswordController {
 
     @FXML
     private void onCancelar() {
-        SessionManager.getInstance().setUsuario(null); // Limpiamos sesión fallida
-        NavegadorUI.mostrarLogin(); // Metodo hipotético para volver atrás
+        SessionManager.getInstance().setUsuario(null); // Limpiamos sesion fallida
+        NavegadorUI.mostrarLogin(); // Metodo hipotetico para volver atrás
     }
 
     private void mostrarError(String msj) {

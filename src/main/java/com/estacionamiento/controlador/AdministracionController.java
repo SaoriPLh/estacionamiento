@@ -144,10 +144,7 @@ public class AdministracionController {
                 .filter(r -> r.getTarifa() != null
                         && r.getTarifa().getTipoTarifa().getIdTipoTarifa() == MisConstantes.TARIFA_PENSION)
                 .mapToDouble(Registro::getMonto).sum();
-        double ingresosEspecial = registros.stream()
-                .filter(r -> r.getTarifa() != null
-                        && r.getTarifa().getTipoTarifa().getIdTipoTarifa() == MisConstantes.TARIFA_ESPECIAL)
-                .mapToDouble(Registro::getMonto).sum();
+       
         double ingresosConvenio = registros.stream()
                 .filter(r -> r.getTarifa() != null
                         && r.getTarifa().getTipoTarifa().getIdTipoTarifa() == MisConstantes.TARIFA_CONVENIO)
@@ -155,7 +152,6 @@ public class AdministracionController {
 
         serie.getData().add(new XYChart.Data<>("Normal", ingresosNormal));
         serie.getData().add(new XYChart.Data<>("Pensión", ingresosPension));
-        serie.getData().add(new XYChart.Data<>("Especial", ingresosEspecial));
         serie.getData().add(new XYChart.Data<>("Convenio", ingresosConvenio));
 
         barChart.getData().add(serie);

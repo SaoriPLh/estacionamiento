@@ -12,6 +12,10 @@ public class EmailService {
         String usuario = ConfiguracionLocal.get("email.usuario");
         String password = ConfiguracionLocal.get("email.password");
 
+        System.out.println("HOST: " + host);
+System.out.println("USER: " + usuario);
+System.out.println("PORT: " + puerto);
+
         if (host == null || usuario == null || password == null) return null;
 
         Properties props = new Properties();
@@ -52,13 +56,14 @@ public class EmailService {
     }
 
     public static void notificarNuevaPension(String correo, String nombreCliente, String placa,
-                                              String fechaInicio, String fechaFin, double monto) {
+                                              String fechaInicio, String fechaFin, double monto, Double descuento) {
         String asunto = "Confirmacion de tu plan de pension";
         String cuerpo = "Hola " + nombreCliente + ",\n\n"
                 + "Tu plan de pension ha sido registrado exitosamente.\n\n"
                 + "  Vehiculo : " + placa + "\n"
                 + "  Inicio   : " + fechaInicio + "\n"
                 + "  Vigente  : " + fechaFin + "\n"
+                + "  Descuento  : " + descuento  + "\n"
                 + "  Pagado   : $" + String.format("%.2f", monto) + "\n\n"
                 + "Conserva este comprobante. Te avisaremos cuando tu plan este proximo a vencer.\n\n"
                 + "Gracias por preferirnos.";

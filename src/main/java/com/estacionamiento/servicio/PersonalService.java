@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Servicio para gestionar el ciclo de vida del personal
+ 
  * @author saori
  */
 public class PersonalService {
@@ -233,7 +233,7 @@ public int cambiarContraseña(int idPersona, String contrasenaNueva) {
         return 1;
     }
 
-    return 0; // múltiples sedes → elegir
+    return 0; // admin
 }
     
     

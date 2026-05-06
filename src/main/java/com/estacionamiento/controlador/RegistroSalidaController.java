@@ -83,12 +83,37 @@ public class RegistroSalidaController {
                 .filter(r -> r.getEstadoRegistro() != null
                         && r.getEstadoRegistro().getIdEstadoRegistro() == 2) // ACTIVO
                 .filter(r -> {
+                    
                     String placa = r.getVehiculo() != null ? r.getVehiculo().getPlaca() : "";
                     String espacioCod = r.getEspacio() != null && r.getEspacio().getCodigo() != null
                             ? r.getEspacio().getCodigo() : "";
                     return placa.equalsIgnoreCase(termino) || espacioCod.equalsIgnoreCase(termino);
                 })
                 .findFirst().orElse(null);
+
+                System.out.println("========== RESULTADO FINAL ==========");
+
+if (registroActivo != null) {
+    System.out.println("REGISTRO ENCONTRADO ID: " + registroActivo.getIdRegistro());
+
+    System.out.println("PLACA: " +
+            (registroActivo.getVehiculo() != null
+                    ? registroActivo.getVehiculo().getPlaca()
+                    : "NULL"));
+
+    System.out.println("MODELO: " +
+            (registroActivo.getVehiculo() != null
+                    ? registroActivo.getVehiculo().getModelo()
+                    : "NULL"));
+
+    System.out.println("ESPACIO: " +
+            (registroActivo.getEspacio() != null
+                    ? registroActivo.getEspacio().getCodigo()
+                    : "NULL"));
+
+} else {
+    System.out.println("REGISTRO ACTIVO = NULL");
+}
 
         if (registroActivo == null) {
             mostrarError("No se encontró un registro activo con ese dato.");
@@ -102,6 +127,7 @@ public class RegistroSalidaController {
     }
 
     private void mostrarInfoRegistro(Registro r) {
+        System.out.println("Enrtrnado mostrarInfoRegistro()");
         lblPlaca.setText(r.getVehiculo() != null ? r.getVehiculo().getPlaca() : "—");
 
         String modelo = r.getVehiculo() != null && r.getVehiculo().getModelo() != null
