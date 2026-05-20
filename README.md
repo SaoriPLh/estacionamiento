@@ -1,6 +1,6 @@
-# Sistema de Estacionamiento — CyberPark
+# Sistema de Gestión de Estacionamientos
 
-Sistema de gestión de estacionamientos desarrollado en **Java 17 + JavaFX 21** con persistencia en **MySQL (AWS RDS)**. Arquitectura MVC completa.
+Sistema desarrollado en **Java 17 + JavaFX 21** con persistencia en **MySQL (AWS RDS)**. Arquitectura MVC completa.
 
 ---
 
@@ -18,6 +18,31 @@ Sistema de gestión de estacionamientos desarrollado en **Java 17 + JavaFX 21** 
 10. [Cómo ejecutar](#10-cómo-ejecutar)
 11. [Base de datos](#11-base-de-datos)
 12. [Dependencias](#12-dependencias)
+
+---
+
+## Capturas de pantalla
+
+### Inicio de sesión
+![Login](src/main/resources/com/estacionamiento/vista/login.png)
+
+### Selección de estacionamiento
+![Menú de estacionamientos](src/main/resources/com/estacionamiento/vista/menuEstacionamientos.png)
+
+### Dashboard principal
+![Dashboard / Inicio](src/main/resources/com/estacionamiento/vista/inicio.png)
+
+### Historial de registros
+![Historial](src/main/resources/com/estacionamiento/vista/historial.png)
+
+### Gestión de pensiones
+![Pensiones](src/main/resources/com/estacionamiento/vista/pensiones.png)
+
+### Clientes
+![Clientes](src/main/resources/com/estacionamiento/vista/clientes.png)
+
+### Configuración
+![Configuración](src/main/resources/com/estacionamiento/vista/configuracion.png)
 
 ---
 
@@ -402,14 +427,14 @@ Con `MODO_DEMO = true` **ningún controlador toca la base de datos**. En su luga
 
 | Método | Contenido |
 |---|---|
-| `inyectarSesionDemo()` | Sesión de Admin "CyberPark Demo" → sede "Comercial Centro" |
+| `inyectarSesionDemo()` | Sesión de Admin "Demo" → sede "Comercial Centro" |
 | `getEspacios()` | 30 cajones: 18 disponibles, 8 ocupados, 4 pensión (mezcla reproducible con seed 42) |
 | `getRegistrosActivos()` | Un registro activo por cada espacio ocupado/pensión (8-12 entradas) |
 | `getHistorial()` | 15 registros: 10 finalizados + 5 activos |
 | `getTarifas()` | Normal $35/hr · Pensión $1 200/mes · Especial $50/hr · Convenio $800/quinc. |
 | `getMarcas()` | 10 marcas: Toyota, Honda, Nissan, Chevrolet, Ford, VW, Kia, Hyundai, Mazda, BMW |
 | `getClientes()` | 4 clientes con tarifa Pensión |
-| `getPersonal()` | 3 empleados + 1 admin (Saori) |
+| `getPersonal()` | 3 empleados + 1 admin |
 | `getResumenGanancias()` | Totales hardcodeados para gráficas de Administración |
 | `getRegistroActivoParaSalida(termino)` | Búsqueda por placa/espacio; si no hay coincidencia exacta devuelve el primero |
 
@@ -501,6 +526,10 @@ La JVM detecta que `App` extiende `javafx.application.Application` y busca `java
 
 ## 11. Base de datos
 
+### Diagrama Entidad-Relación
+
+![Diagrama ER](src/main/resources/com/estacionamiento/EstacionamientoER.jpg)
+
 | Parámetro | Valor |
 |---|---|
 | Motor | MySQL 8 |
@@ -526,8 +555,6 @@ La JVM detecta que `App` extiende `javafx.application.Application` y busca `java
 
 ---
 
----
-
 ## 13. Historial de cambios relevantes
 
 | Fecha | Cambio |
@@ -550,7 +577,6 @@ La JVM detecta que `App` extiende `javafx.application.Application` y busca `java
 | Mayo 2026 | **Bugfix — RegistroEntradaController:** `ticketService.imprimirEntrada` ahora recibe `resultado` (objeto con `idRegistro` y `fechaRegistro` reales), no el objeto local sin datos de BD; error de ticket ya no impide cerrar el modal |
 | Mayo 2026 | **Bugfix — TicketService:** helper `obtenerNombreSede()` lee nombre de `SessionManager` cuando el espacio no tiene estacionamiento poblado; null-safety en `fechaRegistro`, `horaEntrada`, `horaSalida` y `persona` en ambos métodos `imprimirEntrada` / `imprimirSalida` |
 | Mayo 2026 | **Fix diseño — CambiarPassword.fxml:** reestructurado igual que Login (outer VBox sin bg + inner VBox con login-card); el gradiente oscuro ahora se ve completo sin el card blanco extendiéndose a toda la ventana |
-
 | Mayo 2026 | **Fix — requiere_cambio:** `PersonaDAO.insertar()` ya usa `p.isRequiereCambio()` (siempre 0 al crear via UI); `LoginServicio` intenta BCrypt antes que texto plano cuando `requiere_cambio=1`; permite "solicitar cambio" sin necesidad de resetear la contrasena a texto plano |
 | Mayo 2026 | **Ticket de pension:** `TicketService.imprimirPension()` imprime comprobante en formato salida con PENSION/vigencia; `RegistroEntradaController` lo llama en lugar de `imprimirEntrada` cuando la tarifa es PENSION |
 | Mayo 2026 | **Impresoras independientes:** claves separadas `printer.tickets` y `printer.reportes` en `config_impresoras.properties`; pestaña "Impresoras" en Configuracion permite ver y eliminar cada una; al eliminar, la proxima impresion pide seleccion nueva |
@@ -561,9 +587,9 @@ La JVM detecta que `App` extiende `javafx.application.Application` y busca `java
 
 ---
 
-## 14. Flujo de correos electronicos
+## 14. Flujo de correos electrónicos
 
-El sistema usa **Jakarta Mail (SMTP)** para enviar correos. La configuracion va en `config_impresoras.properties`:
+El sistema usa **Jakarta Mail (SMTP)** para enviar correos. La configuración va en `config_impresoras.properties`:
 
 ```properties
 email.host=smtp.gmail.com
@@ -573,20 +599,20 @@ email.password=app-password-de-16-caracteres
 email.admin=admin@tuempresa.com
 ```
 
-### Cuando se envian los correos
+### Cuándo se envían los correos
 
-| Evento | Destinatario | Metodo |
+| Evento | Destinatario | Método |
 |--------|-------------|--------|
-| Se registra una pension nueva | Cliente (si tiene correo) | `notificarNuevaPension()` — en el momento del registro |
-| Pension vence (fecha_fin < hoy) | Cliente + Admin | `notificarVencimientoCliente()` + `notificarAdminVencimiento()` — al iniciar la app |
-| Pension esta a N dias de vencer | Cliente + Admin | mismos metodos — al iniciar la app |
+| Se registra una pensión nueva | Cliente (si tiene correo) | `notificarNuevaPension()` — en el momento del registro |
+| Pensión vence (fecha_fin < hoy) | Cliente + Admin | `notificarVencimientoCliente()` + `notificarAdminVencimiento()` — al iniciar la app |
+| Pensión está a N días de vencer | Cliente + Admin | mismos métodos — al iniciar la app |
 
-### Como funciona al iniciar
+### Cómo funciona al iniciar
 
 `MainLayoutController.initialize()` lanza un hilo daemon que ejecuta:
-1. `PensionService.verificarVencimientos()` — busca pensiones activas cuya `fecha_fin < CURDATE()`, las marca como VENCIDA, libera los espacios, cierra sus registros y envia email de vencimiento.
-2. `PensionService.enviarAvisosProximos(3)` — busca pensiones activas que vencen en los proximos 3 dias y envia aviso preventivo.
+1. `PensionService.verificarVencimientos()` — busca pensiones activas cuya `fecha_fin < CURDATE()`, las marca como VENCIDA, libera los espacios, cierra sus registros y envía email de vencimiento.
+2. `PensionService.enviarAvisosProximos(3)` — busca pensiones activas que vencen en los próximos 3 días y envía aviso preventivo.
 
-Los correos se envian en un hilo separado (`email-sender`) para no bloquear la UI. Si el SMTP no esta configurado, el sistema imprime un mensaje en consola y continua sin errores.
+Los correos se envían en un hilo separado (`email-sender`) para no bloquear la UI. Si el SMTP no está configurado, el sistema imprime un mensaje en consola y continúa sin errores.
 
 *Actualizado — Mayo 2026*
