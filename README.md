@@ -24,25 +24,25 @@ Sistema desarrollado en **Java 17 + JavaFX 21** con persistencia en **MySQL (AWS
 ## Capturas de pantalla
 
 ### Inicio de sesión
-![Login](src/main/resources//login.png)
+![Login](src/main/resources/login.png)
 
 ### Selección de estacionamiento
-![Menú de estacionamientos](src/main/resources/com/estacionamiento/vista/menuEstacionamientos.png)
+![Menú de estacionamientos](src/main/resources/menuEstacionamientos.png)
 
 ### Dashboard principal
-![Dashboard / Inicio](src/main/resources/com/estacionamiento/vista/inicio.png)
+![Dashboard / Inicio](src/main/resources/inicio.png)
 
 ### Historial de registros
-![Historial](src/main/resources/com/estacionamiento/vista/historial.png)
+![Historial](src/main/resources/historial.png)
 
 ### Gestión de pensiones
-![Pensiones](src/main/resources/com/estacionamiento/vista/pensiones.png)
+![Pensiones](src/main/resources/pensiones.png)
 
 ### Clientes
-![Clientes](src/main/resources/com/estacionamiento/vista/clientes.png)
+![Clientes](src/main/resources/clientes.png)
 
 ### Configuración
-![Configuración](src/main/resources/com/estacionamiento/vista/configuracion.png)
+![Configuración](src/main/resources/configuracion.png)
 
 ---
 
