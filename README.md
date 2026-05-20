@@ -24,7 +24,7 @@ Sistema desarrollado en **Java 17 + JavaFX 21** con persistencia en **MySQL (AWS
 ## Capturas de pantalla
 
 ### Inicio de sesión
-![Login](src/main/resources/com/estacionamiento/login.png)
+![Login](src/main/resources//login.png)
 
 ### Selección de estacionamiento
 ![Menú de estacionamientos](src/main/resources/com/estacionamiento/vista/menuEstacionamientos.png)
