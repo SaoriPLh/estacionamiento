@@ -528,7 +528,7 @@ La JVM detecta que `App` extiende `javafx.application.Application` y busca `java
 
 ### Diagrama Entidad-Relación
 
-![Diagrama ER](src/main/resources/com/estacionamiento/EstacionamientoER.jpg)
+![Diagrama ER](src/main/resources/EstacionamientoER.jpg)
 
 | Parámetro | Valor |
 |---|---|
